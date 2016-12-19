@@ -5,6 +5,6 @@
     tools:context="com.example.android.autographs.CatalogActivity">
     <item
         android:id="@+id/dummy_insert"
-        android:title="@string/action_settings"
+        android:title="@string/dummy_insert"
         app:showAsAction="never" />
 </menu>
