@@ -4,4 +4,13 @@
 
     // empty view text
     <string name="empty_text_title">No Items For Sale</string>
+
+    // detail view
+    <string name="detail_sale">Sale</string>
+    <string name="detail_place_order">Place\nOrder</string>
+    <string name="detail_order_received">Order\nReceived</string>
+    <string name="detail_adjust">Manual\nUpdate</string>
+    <string name="detail_delete">Delete</string>
+    <string name="detail_in_stock">In-Stock</string>
+
 </resources>

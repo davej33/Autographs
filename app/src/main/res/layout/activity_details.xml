@@ -76,15 +76,16 @@
                     android:layout_height="wrap_content"
                     android:layout_above="@+id/inventory_count"
                     android:layout_centerInParent="true"
-                    android:text="In-Stock"
-                    android:textSize="50sp" />
+                    android:text="@string/detail_in_stock"
+                    android:textSize="50sp"
+                    />
 
                 <TextView
                     android:id="@+id/inventory_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:text="100"
+                    android:text="55"
                     android:textSize="80sp" />
 
 
@@ -105,7 +106,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="Sale" />
+                android:text="@string/detail_sale" />
 
             <Button
                 android:id="@+id/details_place_order"
@@ -114,7 +115,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="Place\nOrder" />
+                android:text="@string/detail_place_order" />
 
             <Button
                 android:id="@+id/details_order_received"
@@ -123,7 +124,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="Order\nReceived" />
+                android:text="@string/detail_order_received" />
 
             <Button
                 android:id="@+id/details_adjust"
@@ -132,7 +133,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="Adjust\nInventory" />
+                android:text="@string/detail_adjust" />
 
             <Button
                 android:id="@+id/details_delete"
@@ -141,7 +142,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="Delete\nItem" />
+                android:text="@string/detail_delete" />
 
 
         </LinearLayout>
