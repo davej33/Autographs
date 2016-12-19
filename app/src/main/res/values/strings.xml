@@ -12,5 +12,8 @@
     <string name="detail_adjust">Manual\nUpdate</string>
     <string name="detail_delete">Delete</string>
     <string name="detail_in_stock">In-Stock</string>
+    <string name="detail_label">Add Item</string>
 
+    // detail menu
+    <string name="detail_menu_save">Save</string>
 </resources>

@@ -1,11 +1,11 @@
 package com.example.android.autographs;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -30,8 +30,8 @@ public class CatalogActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(CatalogActivity.this, DetailsActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -69,7 +69,7 @@ public class CatalogActivity extends AppCompatActivity {
         Cursor cursor = db.query(
                 ItemInventory.TABLE_NAME,
                 projection,
-                null,null,null,null,null);
+                null, null, null, null, null);
 
         TextView displayView = (TextView) findViewById(R.id.inv_text_view);
 
@@ -77,15 +77,15 @@ public class CatalogActivity extends AppCompatActivity {
             // Display the number of rows in the Cursor (which reflects the number of rows in the
             // pets table in the database).
             int count = cursor.getCount();
-            displayView.setText("Number of items: " + count +"\n\n");
+            displayView.setText("Number of items: " + count + "\n\n");
             displayView.append(
                     ItemInventory._ID + " - "
-                    + ItemInventory.ITEM_NAME + " - "
-                    + ItemInventory.ITEM_SALE_PRICE + " - "
-                    + ItemInventory.ITEM_QUANTITY + "\n");
+                            + ItemInventory.ITEM_NAME + " - "
+                            + ItemInventory.ITEM_SALE_PRICE + " - "
+                            + ItemInventory.ITEM_QUANTITY + "\n");
 
             // iterate through each item and display values
-            while(cursor.moveToNext()){
+            while (cursor.moveToNext()) {
                 // get column index
                 int idCol = cursor.getColumnIndex(ItemInventory._ID);
                 int nameCol = cursor.getColumnIndex(ItemInventory.ITEM_NAME);
@@ -110,7 +110,7 @@ public class CatalogActivity extends AppCompatActivity {
         }
     }
 
-    public void insertItem(){
+    public void insertItem() {
         InventoryDbHelper mDbHelper = new InventoryDbHelper(this);
 
         // Create and/or open a database to read from it
@@ -127,6 +127,7 @@ public class CatalogActivity extends AppCompatActivity {
 
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

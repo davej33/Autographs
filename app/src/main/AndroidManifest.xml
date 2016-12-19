@@ -18,7 +18,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".DetailsActivity"></activity>
+        <activity android:name=".DetailsActivity"
+            android:label="@string/detail_label"
+            android:theme="@style/AppTheme"
+            android:parentActivityName=".CatalogActivity">
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".CatalogActivity" />
+        </activity> 
+        <provider
+            android:authorities="com.example.android.autographs"
+            android:name=".data.InventoryProvider"
+            android:exported="false"/>
     </application>
 
 </manifest>
