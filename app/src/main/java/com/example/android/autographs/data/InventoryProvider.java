@@ -10,6 +10,7 @@ import android.net.Uri;
 
 import com.example.android.autographs.data.InventoryContract.Inventory;
 import com.example.android.autographs.data.InventoryContract.InventoryUpdates;
+
 /**
  * Created by dnj on 12/19/16.
  */
@@ -80,14 +81,23 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-
-
         return null;
     }
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        final int match = sUriMatcher.match(uri);
+        switch(match){
+            case INVENTORY_TABLE:
+                return insertItem(uri, values);
+        }
         return null;
+    }
+
+    private Uri insertItem(Uri uri, ContentValues values) {
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        long id = db.insert(Inventory.INV_TABLE_NAME, null, values);
+        return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
