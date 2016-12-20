@@ -89,8 +89,7 @@ public class InventoryProvider extends ContentProvider {
         final int match = sUriMatcher.match(uri);
         switch(match){
             case INVENTORY_TABLE:
-                return insertItem(uri, values);
-        }
+                return insertItem(uri, values);}
         return null;
     }
 
