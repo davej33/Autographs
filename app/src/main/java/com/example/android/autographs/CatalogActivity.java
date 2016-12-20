@@ -13,7 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.example.android.autographs.data.InventoryContract.ItemInventory;
+import com.example.android.autographs.data.InventoryContract.*;
+import com.example.android.autographs.data.InventoryContract;
 import com.example.android.autographs.data.InventoryDbHelper;
 
 public class CatalogActivity extends AppCompatActivity {
@@ -51,25 +52,19 @@ public class CatalogActivity extends AppCompatActivity {
      * the pets database.
      */
     private void displayDatabaseInfo() {
-        // To access our database, we instantiate our subclass of SQLiteOpenHelper
-        // and pass the context, which is the current activity.
-        InventoryDbHelper mDbHelper = new InventoryDbHelper(this);
-
-        // Create and/or open a database to read from it
-        SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         // Perform this raw SQL query "SELECT * FROM pets"
         // to get a Cursor that contains all rows from the pets table.
         String[] projection = {
-                ItemInventory._ID,
-                ItemInventory.ITEM_NAME,
-                ItemInventory.ITEM_SALE_PRICE,
-                ItemInventory.ITEM_QUANTITY};
+                Inventory._ID,
+                Inventory.ITEM_NAME,
+                Inventory.ITEM_SALE_PRICE,
+                Inventory.ITEM_QUANTITY};
 
-        Cursor cursor = db.query(
-                ItemInventory.TABLE_NAME,
+        Cursor cursor = getContentResolver().query(
+                InventoryContract.INVENTORY_CONTENT_URI,
                 projection,
-                null, null, null, null, null);
+                null, null, null);
 
         TextView displayView = (TextView) findViewById(R.id.inv_text_view);
 
@@ -79,18 +74,26 @@ public class CatalogActivity extends AppCompatActivity {
             int count = cursor.getCount();
             displayView.setText("Number of items: " + count + "\n\n");
             displayView.append(
-                    ItemInventory._ID + " - "
-                            + ItemInventory.ITEM_NAME + " - "
-                            + ItemInventory.ITEM_SALE_PRICE + " - "
-                            + ItemInventory.ITEM_QUANTITY + "\n");
+
+                    Inventory._ID + " - "
+                            +
+                            Inventory.ITEM_NAME + " - "
+                            +
+                            Inventory.ITEM_SALE_PRICE + " - "
+                            +
+                            Inventory.ITEM_QUANTITY + "\n");
 
             // iterate through each item and display values
             while (cursor.moveToNext()) {
                 // get column index
-                int idCol = cursor.getColumnIndex(ItemInventory._ID);
-                int nameCol = cursor.getColumnIndex(ItemInventory.ITEM_NAME);
-                int priceCol = cursor.getColumnIndex(ItemInventory.ITEM_SALE_PRICE);
-                int quantityCol = cursor.getColumnIndex(ItemInventory.ITEM_QUANTITY);
+                int idCol = cursor.getColumnIndex(
+                        Inventory._ID);
+                int nameCol = cursor.getColumnIndex(
+                        Inventory.ITEM_NAME);
+                int priceCol = cursor.getColumnIndex(
+                        Inventory.ITEM_SALE_PRICE);
+                int quantityCol = cursor.getColumnIndex(
+                        Inventory.ITEM_QUANTITY);
 
                 // get values
                 int id = cursor.getInt(idCol);
@@ -117,12 +120,17 @@ public class CatalogActivity extends AppCompatActivity {
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
         ContentValues dummyItem = new ContentValues();
-        dummyItem.put(ItemInventory.ITEM_NAME, "Test Item");
-        dummyItem.put(ItemInventory.ITEM_SALE_PRICE, 12.30);
-        dummyItem.put(ItemInventory.ITEM_QUANTITY, 5);
-        dummyItem.put(ItemInventory.ITEM_SUPPLIER, "Test Supplier");
+        dummyItem.put(
+                Inventory.ITEM_NAME, "Test Item");
+        dummyItem.put(
+                Inventory.ITEM_SALE_PRICE, 12.30);
+        dummyItem.put(
+                Inventory.ITEM_QUANTITY, 5);
+        dummyItem.put(
+                Inventory.ITEM_SUPPLIER, "Test Supplier");
 
-        long dummy = db.insert(ItemInventory.TABLE_NAME, null, dummyItem);
+        long dummy = db.insert(
+                Inventory.INV_TABLE_NAME, null, dummyItem);
         Log.e("CatalogActivity", "long dummy = " + dummy);
 
 

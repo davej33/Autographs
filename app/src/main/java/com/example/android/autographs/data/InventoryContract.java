@@ -1,5 +1,6 @@
 package com.example.android.autographs.data;
 
+import android.net.Uri;
 import android.provider.BaseColumns;
 
 /**
@@ -8,12 +9,21 @@ import android.provider.BaseColumns;
 
 public class InventoryContract {
 
+    // URI constants
+    public static final String CONTENT_AUTHORITY = "com.example.android.autographs";
+    public static final Uri BASE_CONTENT_URI = Uri.parse("content://" + CONTENT_AUTHORITY);
+    public static final String INVENTORY_PATH = "inventory";
+    public static final String UPDATES_PATH = "updates";
+    public static final Uri INVENTORY_CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, INVENTORY_PATH);
+    public static final Uri UPDATES_CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, UPDATES_PATH);
+
+    // empty constructor
     public InventoryContract(){}
 
-    public abstract static class ItemInventory implements BaseColumns{
+    public abstract static class Inventory implements BaseColumns{
 
         // table
-        public static final String TABLE_NAME = "Items";
+        public static final String INV_TABLE_NAME = "inventory";
 
         // column headers
         public static final String _ID = BaseColumns._ID;
@@ -25,10 +35,10 @@ public class InventoryContract {
 
     }
 
-    public abstract static class ItemInventoryUpdates implements BaseColumns{
+    public abstract static class InventoryUpdates implements BaseColumns{
 
-        // table for sales, purchases, and manual invetory updates
-        public static final String TABLE_NAME = "InventoryUpdates";
+        // table to track sales, purchases, and manual inventory updates
+        public static final String UPD_TABLE_NAME = "updates";
 
         // column headers
         public static final String UPDATE_ID = BaseColumns._ID;
