@@ -41,14 +41,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Price" />
+                android:hint="Add Price"
+                android:inputType="numberDecimal" />
 
             <EditText
                 android:id="@+id/insert_quantity"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Quantity" />
+                android:hint="Add Quantity"
+                android:inputType="numberDecimal" />
 
             <EditText
                 android:id="@+id/insert_supplier"
@@ -71,9 +73,9 @@
 
         <RelativeLayout
             android:id="@+id/item_inventory_buttons"
-            android:layout_margin="16dp"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_margin="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -96,10 +98,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="8dp"
                 android:paddingLeft="80dp"
                 android:paddingRight="80dp"
-                android:layout_marginBottom="8dp"
-                android:layout_centerHorizontal="true"
                 android:text="@string/detail_sale" />
 
             <Button
@@ -141,12 +143,9 @@
                 android:text="@string/detail_delete" />
 
 
-
         </RelativeLayout>
 
     </LinearLayout>
-
-
 
 
 </LinearLayout>

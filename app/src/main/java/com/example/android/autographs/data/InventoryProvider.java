@@ -7,6 +7,7 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 import com.example.android.autographs.data.InventoryContract.Inventory;
 import com.example.android.autographs.data.InventoryContract.InventoryUpdates;
@@ -86,6 +87,8 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+
+
         final int match = sUriMatcher.match(uri);
         switch(match){
             case INVENTORY_TABLE:
@@ -94,8 +97,39 @@ public class InventoryProvider extends ContentProvider {
     }
 
     private Uri insertItem(Uri uri, ContentValues values) {
+        // empty name check
+        String nameValidation = values.getAsString(Inventory.ITEM_NAME);
+        if (nameValidation.isEmpty()){
+            Log.e(LOG_TAG, "Empty name");
+            throw new IllegalArgumentException("Item requires a name");
+        }
+
+        // price check
+        long priceCheck = values.getAsLong(Inventory.ITEM_SALE_PRICE);
+        if (priceCheck <= 0 || priceCheck > 10000){
+            throw new IllegalArgumentException("Please enter valid price");
+        }
+
+        // quantity check
+        int quantCheck = values.getAsInteger(Inventory.ITEM_QUANTITY);
+        if (quantCheck <= 0 || quantCheck > 10000){
+            throw new IllegalArgumentException("Please enter valid quantity");
+        }
+
+        // provider check
+        String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
+        if (provCheck.isEmpty()){
+            throw new IllegalArgumentException("Please enter supplier");
+        }
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
         long id = db.insert(Inventory.INV_TABLE_NAME, null, values);
+
+        if (id == -1){
+            Log.e(LOG_TAG, "Failed to insert row: " + uri);
+            return null;
+        }
+
         return ContentUris.withAppendedId(uri, id);
     }
 
@@ -106,6 +140,8 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
-        return 0;
+        SQLiteDatabase db = mDbHelper.getWritableDatabase();
+        int id = db.update(Inventory.INV_TABLE_NAME, values, selection, selectionArgs);
+        return id;
     }
 }

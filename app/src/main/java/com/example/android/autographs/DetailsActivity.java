@@ -31,31 +31,43 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    public void insertItem(){
+    public void insertItem() {
 
         // get values from objects
         String name = mNameInsert.getText().toString().trim();
-        long price = Long.parseLong(mPriceInsert.getText().toString());
-        int quantity = Integer.parseInt(mQuantInsert.getText().toString());
+        String price = mPriceInsert.getText().toString().trim();
+        String quantity = mQuantInsert.getText().toString().trim();
         String supplier = mSupInsert.getText().toString().trim();
 
         // create content value object and populate
         ContentValues insertValues = new ContentValues();
         insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
-        insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, price);
-        insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantity);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
+
+        long priceSet = 0;
+        if(!price.isEmpty()){
+            priceSet = Long.parseLong(price);
+        }
+        insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
+
+        int quantSet = 0;
+        if(!quantity.isEmpty()){
+            quantSet = Integer.parseInt(quantity);
+        }
+        insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
 
 
         // insert into DB
         Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
-        if(insertItem == null){
+        if (insertItem != null) {
             Toast.makeText(this, "Successfully Added", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
         }
 
-    };
+    }
+
+    ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,9 +77,10 @@ public class DetailsActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.add_item_save:
                 insertItem();
+                finish();
                 break;
             case R.id.add_item_cancel:
                 // to do
