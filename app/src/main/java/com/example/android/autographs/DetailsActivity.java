@@ -1,27 +1,48 @@
 package com.example.android.autographs;
 
+import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
+import android.content.Intent;
+import android.content.Loader;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     EditText mNameInsert;
     EditText mPriceInsert;
     EditText mQuantInsert;
     EditText mSupInsert;
+    Uri mCurrentItemUri;
+    private static final int CURSOR_LOADER_ID = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        Intent intent = getIntent();
+        mCurrentItemUri = intent.getData();
+
+        if (mCurrentItemUri != null) {
+            setTitle(R.string.detail_edit_item);
+            getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+        } else {
+            setTitle(R.string.detail_insert);
+            RelativeLayout buttonsLayout = (RelativeLayout) findViewById(R.id.item_inventory_buttons);
+            buttonsLayout.setVisibility(View.GONE);
+        }
 
         // get view objects
         mNameInsert = (EditText) findViewById(R.id.insert_item_name);
@@ -31,7 +52,7 @@ public class DetailsActivity extends AppCompatActivity {
 
     }
 
-    public void insertItem() {
+    public void saveItem() {
 
         // get values from objects
         String name = mNameInsert.getText().toString().trim();
@@ -45,13 +66,13 @@ public class DetailsActivity extends AppCompatActivity {
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
 
         long priceSet = 0;
-        if(!price.isEmpty()){
+        if (!price.isEmpty()) {
             priceSet = Long.parseLong(price);
         }
         insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
 
         int quantSet = 0;
-        if(!quantity.isEmpty()){
+        if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
         }
         insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
@@ -79,12 +100,54 @@ public class DetailsActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.add_item_save:
-                insertItem();
+                saveItem();
                 finish();
                 break;
             case R.id.add_item_cancel:
                 // to do
         }
         return true;
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String[] projection = {
+                InventoryContract.Inventory.ITEM_NAME,
+                InventoryContract.Inventory.ITEM_SALE_PRICE,
+                InventoryContract.Inventory.ITEM_QUANTITY,
+                InventoryContract.Inventory.ITEM_SUPPLIER};
+
+
+        return new CursorLoader(this,
+                mCurrentItemUri, projection,
+                null, null, null);
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+
+        if (data.moveToFirst()) {
+            int nameCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_NAME);
+            int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
+            int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
+            int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
+
+            String name = data.getString(nameCol);
+            long price = data.getLong(priceCol);
+            String priceString = String.valueOf(price);
+            int quantity = data.getInt(quantCol);
+            String quantString = String.valueOf(quantity);
+            String supplier = data.getColumnName(supCol);
+
+            mNameInsert.setText(name);
+            mPriceInsert.setText(priceString);
+            mQuantInsert.setText(quantString);
+            mSupInsert.setText(supplier);
+        }
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+
     }
 }

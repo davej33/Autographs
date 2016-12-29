@@ -13,6 +13,8 @@
     <string name="detail_delete">Delete</string>
     <string name="detail_in_stock">In-Stock</string>
     <string name="detail_label">Add Item</string>
+    <string name="detail_edit_item">Edit Item</string>
+    <string name="detail_insert">Insert Item</string>
 
     // detail menu
     <string name="detail_menu_save">Save</string>

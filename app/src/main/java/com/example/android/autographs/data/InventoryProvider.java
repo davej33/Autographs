@@ -42,12 +42,13 @@ public class InventoryProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
-        mDbHelper = new InventoryDbHelper(getContext()); // stopped here
+        mDbHelper = new InventoryDbHelper(getContext());
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+
         SQLiteDatabase db = mDbHelper.getReadableDatabase();
 
         Cursor cursor;
@@ -77,13 +78,16 @@ public class InventoryProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Could not query URI: " + uri);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
+
         return cursor;
     }
 
     @Override
     public String getType(Uri uri) {
         final int match = sUriMatcher.match(uri);
-        switch(match){
+        switch (match) {
             case INVENTORY_ID:
                 return InventoryContract.CONTENT_ITEM_TYPE;
             case INVENTORY_TABLE:
@@ -106,6 +110,7 @@ public class InventoryProvider extends ContentProvider {
     }
 
     private Uri insertItem(Uri uri, ContentValues values) {
+
         // empty name check
         String nameValidation = values.getAsString(Inventory.ITEM_NAME);
         if (nameValidation.isEmpty()) {
@@ -121,7 +126,7 @@ public class InventoryProvider extends ContentProvider {
 
         // quantity check
         int quantCheck = values.getAsInteger(Inventory.ITEM_QUANTITY);
-        if (quantCheck <= 0 || quantCheck > 10000) {
+        if (quantCheck <= 0 || quantCheck > 5000) {
             throw new IllegalArgumentException("Please enter valid quantity");
         }
 
@@ -132,6 +137,7 @@ public class InventoryProvider extends ContentProvider {
         }
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
         long id = db.insert(Inventory.INV_TABLE_NAME, null, values);
 
         if (id == -1) {
@@ -139,23 +145,37 @@ public class InventoryProvider extends ContentProvider {
             return null;
         }
 
+        getContext().getContentResolver().notifyChange(uri, null);
+
         return ContentUris.withAppendedId(uri, id);
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
+
+        int deleteID;
+
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
+
         final int match = sUriMatcher.match(uri);
+
         switch (match) {
             case INVENTORY_TABLE:
-                return db.delete(Inventory.INV_TABLE_NAME, selection, selectionArgs);
+                deleteID = db.delete(Inventory.INV_TABLE_NAME, selection, selectionArgs);
+                break;
             case INVENTORY_ID:
                 selection = Inventory._ID + "=?";
-                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(Inventory.INV_TABLE_NAME, selection, selectionArgs);
+                selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
+                deleteID = db.delete(Inventory.INV_TABLE_NAME, selection, selectionArgs);
+                break;
             default:
                 throw new IllegalArgumentException("Unable to delete using uri: " + uri);
         }
+        if(deleteID != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return deleteID;
     }
 
     @Override
@@ -214,6 +234,12 @@ public class InventoryProvider extends ContentProvider {
 
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
-        return db.update(Inventory.INV_TABLE_NAME, values, selection, selectionArgs);
+        int updateID = db.update(Inventory.INV_TABLE_NAME, values, selection, selectionArgs);
+
+        if(updateID != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return updateID;
     }
 }

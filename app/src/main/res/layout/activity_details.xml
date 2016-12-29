@@ -31,33 +31,33 @@
 
             <EditText
                 android:id="@+id/insert_item_name"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Name" />
+                android:hint="Item" />
 
             <EditText
                 android:id="@+id/insert_price"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Price"
+                android:hint="Price"
                 android:inputType="numberDecimal" />
 
             <EditText
                 android:id="@+id/insert_quantity"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Quantity"
+                android:hint="Quantity"
                 android:inputType="numberDecimal" />
 
             <EditText
                 android:id="@+id/insert_supplier"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Add Supplier" />
+                android:hint="Supplier" />
 
         </LinearLayout>
 
