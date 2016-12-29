@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.android.autographs.data.InventoryContract.Inventory;
@@ -22,7 +23,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        return LayoutInflater.from(context).inflate(R.layout.item_view, parent);
+        return LayoutInflater.from(context).inflate(R.layout.item_view, parent, false);
     }
 
     @Override
@@ -46,6 +47,10 @@ public class InventoryCursorAdapter extends CursorAdapter {
         int quantityCol = cursor.getColumnIndex(Inventory.ITEM_QUANTITY);
         String quantityVal = Integer.toString(cursor.getInt(quantityCol));
         quantity.setText(quantityVal);
+
+        // set image
+        ImageView image = (ImageView) listItemView.findViewById(R.id.image_view);
+
 
     }
 }
