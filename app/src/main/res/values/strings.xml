@@ -18,4 +18,10 @@
 
     // detail menu
     <string name="detail_menu_save">Save</string>
+
+    // unsaved changes on detail view
+    <string name="detail_unsaved_message">Exit without saving?</string>
+    <string name="detail_yes">Discard</string>
+    <string name="detail_keep_editing">Keep Editing</string>
+
 </resources>

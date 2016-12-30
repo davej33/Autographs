@@ -3,14 +3,18 @@ package com.example.android.autographs;
 import android.app.LoaderManager;
 import android.content.ContentValues;
 import android.content.CursorLoader;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
@@ -20,12 +24,21 @@ import com.example.android.autographs.data.InventoryContract;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
+    // globals
     EditText mNameInsert;
     EditText mPriceInsert;
     EditText mQuantInsert;
     EditText mSupInsert;
     Uri mCurrentItemUri;
     private static final int CURSOR_LOADER_ID = 0;
+    private boolean mItemChanged = false;
+    private View.OnTouchListener mOnTouch = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            mItemChanged = true;
+            return false;
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +63,12 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mQuantInsert = (EditText) findViewById(R.id.insert_quantity);
         mSupInsert = (EditText) findViewById(R.id.insert_supplier);
 
+        // set onTouch listeners
+        mNameInsert.setOnTouchListener(mOnTouch);
+        mPriceInsert.setOnTouchListener(mOnTouch);
+        mQuantInsert.setOnTouchListener(mOnTouch);
+        mSupInsert.setOnTouchListener(mOnTouch);
+
     }
 
     public void saveItem() {
@@ -61,8 +80,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String supplier = mSupInsert.getText().toString().trim();
 
         // check for empty values
-        if(name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty()){
-            Toast.makeText(this, "all empty", Toast.LENGTH_SHORT).show();;
+        if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty()) {
+            return;
         }
 
         // create content value object and populate
@@ -112,10 +131,28 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 saveItem();
                 finish();
                 break;
-            case R.id.add_item_cancel:
+            case android.R.id.home:
+                // navigate back if item unchanged
+                if(!mItemChanged){
+                    NavUtils.navigateUpFromSameTask(DetailsActivity.this);
+                    return true;
+                }
+
+                // if changes made, setup dialog
+                DialogInterface.OnClickListener discard = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        NavUtils.navigateUpFromSameTask(DetailsActivity.this);
+                    }
+                };
+
+                showUnsavedChangesDialog(discard);
+                return true;
+
+            //case R.id.add_item_cancel:
                 // to do
         }
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -161,5 +198,41 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mPriceInsert.setText("");
         mQuantInsert.setText("");
         mSupInsert.setText("");
+    }
+
+    private void showUnsavedChangesDialog(DialogInterface.OnClickListener discardButtonClickListener) {
+
+        // create DialogueBuilder and set values
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.detail_unsaved_message);
+        builder.setPositiveButton(R.string.detail_yes, discardButtonClickListener);
+        builder.setNegativeButton(R.string.detail_keep_editing, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+
+        // create and show the AlertDialogue
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!mItemChanged) {
+            super.onBackPressed();
+            return;
+        }
+        DialogInterface.OnClickListener discardButtonClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        };
+
+        showUnsavedChangesDialog(discardButtonClickListener);
     }
 }
