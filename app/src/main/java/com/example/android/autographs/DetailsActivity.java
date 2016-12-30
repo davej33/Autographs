@@ -90,9 +90,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
 
-        long priceSet = 0;
+        double priceSet = 0;
         if (!price.isEmpty()) {
-            priceSet = Long.parseLong(price);
+            priceSet = Double.parseDouble(price);
         }
         insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
 
@@ -115,6 +115,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         } else {
             int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
+            if (updateItem == 0) {
+                Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Successful update", Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -226,7 +231,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
 
             String name = data.getString(nameCol);
-            long price = data.getLong(priceCol);
+            Double price = data.getDouble(priceCol);
             String priceString = String.valueOf(price);
             int quantity = data.getInt(quantCol);
             String quantString = String.valueOf(quantity);

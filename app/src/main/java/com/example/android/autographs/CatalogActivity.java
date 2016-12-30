@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 import com.example.android.autographs.data.InventoryContract.Inventory;
@@ -70,7 +71,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyItem.put(
                 Inventory.ITEM_NAME, "Test Item");
         dummyItem.put(
-                Inventory.ITEM_SALE_PRICE, 12.30);
+                Inventory.ITEM_SALE_PRICE, 12.337);
         dummyItem.put(
                 Inventory.ITEM_QUANTITY, 5);
         dummyItem.put(
@@ -96,8 +97,20 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
             case R.id.dummy_insert:
                 insertItem();
                 return true;
+            case R.id.delete_all:
+                deleteAll();
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void deleteAll() {
+        int deletedRows = getContentResolver().delete(InventoryContract.INVENTORY_CONTENT_URI, null,null);
+        if(deletedRows == 0){
+            Toast.makeText(this, "Deletion Failed", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Successful Deletion", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override

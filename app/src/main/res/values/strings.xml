@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Autographs</string>
     <string name="dummy_insert">Insert Dummy Item</string>
+    <string name="delete_all">Delete All</string>
 
     // empty view text
     <string name="empty_text_title">No Items For Sale</string>
