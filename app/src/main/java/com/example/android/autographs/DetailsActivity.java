@@ -60,6 +60,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String quantity = mQuantInsert.getText().toString().trim();
         String supplier = mSupInsert.getText().toString().trim();
 
+        // check for empty values
+        if(name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty()){
+            Toast.makeText(this, "all empty", Toast.LENGTH_SHORT).show();;
+        }
+
         // create content value object and populate
         ContentValues insertValues = new ContentValues();
         insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
@@ -78,17 +83,21 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
 
 
-        // insert into DB
-        Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
-        if (insertItem != null) {
-            Toast.makeText(this, "Successfully Added", Toast.LENGTH_SHORT).show();
+        // insert into DB or update
+        if (mCurrentItemUri == null) {
+
+            Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
+
+            if (insertItem != null) {
+                Toast.makeText(this, "Successfully Added", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
+            int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
         }
 
     }
-
-    ;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,12 +120,12 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
         String[] projection = {
                 InventoryContract.Inventory.ITEM_NAME,
                 InventoryContract.Inventory.ITEM_SALE_PRICE,
                 InventoryContract.Inventory.ITEM_QUANTITY,
                 InventoryContract.Inventory.ITEM_SUPPLIER};
-
 
         return new CursorLoader(this,
                 mCurrentItemUri, projection,
@@ -148,6 +157,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-
+        mNameInsert.setText("");
+        mPriceInsert.setText("");
+        mQuantInsert.setText("");
+        mSupInsert.setText("");
     }
 }
