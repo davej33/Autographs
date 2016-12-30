@@ -53,6 +53,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
         } else {
             setTitle(R.string.detail_insert);
+            invalidateOptionsMenu();
             RelativeLayout buttonsLayout = (RelativeLayout) findViewById(R.id.item_inventory_buttons);
             buttonsLayout.setVisibility(View.GONE);
         }
@@ -116,6 +117,15 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
         }
 
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if(mCurrentItemUri == null){
+            MenuItem item = menu.findItem(R.id.add_item_delete);
+            item.setVisible(false);
+        }
+        return true;
     }
 
     @Override

@@ -18,6 +18,7 @@
 
     // detail menu
     <string name="detail_menu_save">Save</string>
+    <string name="detail_menu_delete">Delete</string>
 
     // unsaved changes on detail view
     <string name="detail_unsaved_message">Exit without saving?</string>

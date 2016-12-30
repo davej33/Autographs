@@ -6,11 +6,11 @@
     <item
         android:id="@+id/add_item_save"
         android:title="@string/detail_menu_save"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_done"
         app:showAsAction="always" />
     <item
-        android:id="@+id/add_item_cancel"
-        android:title="@string/detail_menu_save"
+        android:id="@+id/add_item_delete"
+        android:title="@string/detail_menu_delete"
         android:icon="@mipmap/ic_launcher"
         app:showAsAction="always" />
 
