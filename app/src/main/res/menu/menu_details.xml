@@ -7,11 +7,11 @@
         android:id="@+id/add_item_save"
         android:title="@string/detail_menu_save"
         android:icon="@mipmap/ic_done"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/add_item_delete"
+        android:id="@+id/detail_item_delete"
         android:title="@string/detail_menu_delete"
         android:icon="@mipmap/ic_launcher"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 
 </menu>

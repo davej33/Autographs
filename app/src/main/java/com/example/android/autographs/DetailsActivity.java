@@ -17,7 +17,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -54,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         } else {
             setTitle(R.string.detail_insert);
             invalidateOptionsMenu();
-            RelativeLayout buttonsLayout = (RelativeLayout) findViewById(R.id.item_inventory_buttons);
+            LinearLayout buttonsLayout = (LinearLayout) findViewById(R.id.item_inventory_buttons);
             buttonsLayout.setVisibility(View.GONE);
         }
 
@@ -121,8 +121,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(mCurrentItemUri == null){
-            MenuItem item = menu.findItem(R.id.add_item_delete);
+        if (mCurrentItemUri == null) {
+            MenuItem item = menu.findItem(R.id.detail_item_delete);
             item.setVisible(false);
         }
         return true;
@@ -143,7 +143,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 break;
             case android.R.id.home:
                 // navigate back if item unchanged
-                if(!mItemChanged){
+                if (!mItemChanged) {
                     NavUtils.navigateUpFromSameTask(DetailsActivity.this);
                     return true;
                 }
@@ -159,8 +159,18 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 showUnsavedChangesDialog(discard);
                 return true;
 
-            //case R.id.add_item_cancel:
-                // to do
+            case R.id.detail_item_delete:
+                DialogInterface.OnClickListener delete = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        getContentResolver().delete(mCurrentItemUri, InventoryContract.Inventory.INV_TABLE_NAME,
+                                null);
+                        NavUtils.navigateUpFromSameTask(DetailsActivity.this);
+                    }
+                };
+                showDeleteItemDialog(delete);
+                return true;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -217,6 +227,22 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         builder.setMessage(R.string.detail_unsaved_message);
         builder.setPositiveButton(R.string.detail_yes, discardButtonClickListener);
         builder.setNegativeButton(R.string.detail_keep_editing, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+    }
+
+    private void showDeleteItemDialog(DialogInterface.OnClickListener deleteButtonClickListener) {
+
+        // create DialogueBuilder and set values
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.detail_delete_message);
+        builder.setPositiveButton(R.string.detail_confirm_delete, deleteButtonClickListener);
+        builder.setNegativeButton(R.string.detail_cancel_delete, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (dialog != null) {

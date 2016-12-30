@@ -20,9 +20,13 @@
     <string name="detail_menu_save">Save</string>
     <string name="detail_menu_delete">Delete</string>
 
-    // unsaved changes on detail view
+    // detail unsaved changes dialog
     <string name="detail_unsaved_message">Exit without saving?</string>
     <string name="detail_yes">Discard</string>
     <string name="detail_keep_editing">Keep Editing</string>
 
+    // detail delete dialog
+    <string name="detail_delete_message">Delete Item?</string>
+    <string name="detail_confirm_delete">Yes</string>
+    <string name="detail_cancel_delete">No</string>
 </resources>
