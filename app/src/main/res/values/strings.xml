@@ -25,4 +25,8 @@
     <string name="detail_yes">Discard</string>
     <string name="detail_keep_editing">Keep Editing</string>
 
+    // delete item
+    <string name="detail_delete_message">Delete Item?</string>
+    <string name="detail_delete_yes">Yes</string>
+    <string name="detail_delete_no">No</string>
 </resources>

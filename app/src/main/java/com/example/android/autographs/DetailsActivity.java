@@ -121,8 +121,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(mCurrentItemUri == null){
-            MenuItem item = menu.findItem(R.id.add_item_delete);
+        if (mCurrentItemUri == null) {
+            MenuItem item = menu.findItem(R.id.detail_item_delete);
             item.setVisible(false);
         }
         return true;
@@ -141,9 +141,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 saveItem();
                 finish();
                 break;
+            case R.id.detail_item_delete:
+                showDeleteConfirmDialog();
+                return true;
+
             case android.R.id.home:
                 // navigate back if item unchanged
-                if(!mItemChanged){
+                if (!mItemChanged) {
                     NavUtils.navigateUpFromSameTask(DetailsActivity.this);
                     return true;
                 }
@@ -159,10 +163,43 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 showUnsavedChangesDialog(discard);
                 return true;
 
-            //case R.id.add_item_cancel:
-                // to do
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showDeleteConfirmDialog() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage(R.string.detail_delete_message);
+        builder.setPositiveButton(R.string.detail_delete_yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteItem();
+            }
+        });
+        builder.setNegativeButton(R.string.detail_delete_no, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (dialog != null) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        // create and show the AlertDialogue
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void deleteItem() {
+        if (mCurrentItemUri != null) {
+            int rowDeleted = getContentResolver().delete(mCurrentItemUri, null, null);
+            if (rowDeleted == 0) {
+                Toast.makeText(this, "Delete failed", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Delete successful", Toast.LENGTH_SHORT).show();
+            }
+        }
+        finish();
     }
 
     @Override
