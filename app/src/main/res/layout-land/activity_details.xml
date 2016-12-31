@@ -35,8 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:hint="Item"
-                />
+                android:hint="Item" />
 
             <EditText
                 android:id="@+id/insert_price"
@@ -73,10 +72,39 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
+        <ListView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+        </ListView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical">
+
+            <Button
+                android:id="@+id/details_order_received"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:text="@string/detail_order_received" />
+
+            <Button
+                android:id="@+id/details_adjust"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right"
+                android:layout_margin="4dp"
+                android:text="@string/detail_adjust" />
+        </LinearLayout>
+
         <LinearLayout
             android:id="@+id/item_inventory_buttons"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
             android:layout_margin="16dp"
             android:orientation="vertical">
 
@@ -94,24 +122,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/detail_place_order" />
-
-            <Button
-                android:id="@+id/details_order_received"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:text="@string/detail_order_received" />
-
-            <Button
-                android:id="@+id/details_adjust"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right"
-                android:layout_margin="4dp"
-
-                android:text="@string/detail_adjust" />
-
-
 
 
         </LinearLayout>
