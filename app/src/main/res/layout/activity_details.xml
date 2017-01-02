@@ -11,7 +11,8 @@
         android:id="@+id/image"
         android:src="@mipmap/ic_launcher"
         app:layout_heightPercent="40%"
-        app:layout_widthPercent="40%" />
+        app:layout_widthPercent="40%"
+        />
 
     <EditText
         android:id="@+id/insert_item_name"
@@ -47,7 +48,7 @@
         app:layout_heightPercent="10%" />
 
     <android.support.percent.PercentRelativeLayout
-        android:id="@+id/buttons_group_view"
+        android:id="@+id/item_inventory_buttons"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/insert_supplier"
@@ -56,39 +57,41 @@
         <ListView
             android:id="@+id/item_transaction_history"
             android:layout_height="match_parent"
-            app:layout_leftMarginPercent="3%"
-            app:layout_widthPercent="67%" />
+            app:layout_widthPercent="67%"
+            app:layout_marginLeftPercent="3%"
+            />
 
         <Button
             android:id="@+id/details_adjust"
+            app:layout_heightPercent="25%"
+            app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
             android:text="@string/detail_adjust"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+             />
 
         <Button
             android:id="@+id/details_place_order"
+            app:layout_heightPercent="25%"
+            app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
             android:layout_below="@id/details_adjust"
-            android:text="@string/detail_place_order"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+            android:text="@string/detail_place_order" />
 
         <Button
             android:id="@+id/details_order_received"
+            app:layout_heightPercent="25%"
+            app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
             android:layout_below="@id/details_place_order"
-            android:text="@string/detail_order_received"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+            android:text="@string/detail_order_received" />
 
         <Button
             android:id="@+id/details_sale"
+            app:layout_heightPercent="25%"
+            app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
             android:layout_below="@+id/details_order_received"
-            android:text="@string/detail_sale"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+            android:text="@string/detail_sale" />
     </android.support.percent.PercentRelativeLayout>
 </android.support.percent.PercentRelativeLayout>
 

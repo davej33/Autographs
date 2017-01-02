@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,7 +18,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -54,7 +54,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         } else {
             setTitle(R.string.detail_insert);
             invalidateOptionsMenu();
-            RelativeLayout buttonsLayout = (RelativeLayout) findViewById(R.id.item_inventory_buttons);
+            PercentRelativeLayout buttonsLayout = (PercentRelativeLayout) findViewById(R.id.item_inventory_buttons);
             buttonsLayout.setVisibility(View.GONE);
         }
 
