@@ -4,7 +4,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.example.android.autographs.data.InventoryContract.Inventory;
+import com.example.android.autographs.data.InventoryContract.*;
 
 /**
  * Created by dnj on 12/17/16.
@@ -30,7 +30,21 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
                 + Inventory.ITEM_IMAGE + " BLOB)";
 
         db.execSQL(SQL_TABLE_CREATE);
+
+        String SQL_TABLE2_CREATE = "CREATE TABLE " + InventoryUpdates.UPDATE_TABLE_NAME + " ("
+                + InventoryUpdates.UPDATE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
+                + InventoryUpdates.UPDATE_ITEM_NAME + " TEXT NOT NULL, "
+                + InventoryUpdates.UPDATE_ITEM_ID + " INTEGER NOT NULL, "
+                + InventoryUpdates.UPDATE_SALE_QUANTITY + " INTEGER, "
+                + InventoryUpdates.UPDATE_SALE_PRICE + " REAL, "
+                + InventoryUpdates.UPDATE_PURCH_QUANTITY + " INTEGER, "
+                + InventoryUpdates.UPDATE_PURCH_PRICE + " REAL, "
+                + InventoryUpdates.UPDATE_PURCHASE_RECEIVED + " INTEGER NOT NULL, "
+                + InventoryUpdates.UPDATE_TRANSACTION_DATETIME + " TEXT NOT NULL)";
+
+        db.execSQL(SQL_TABLE2_CREATE);
     }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {

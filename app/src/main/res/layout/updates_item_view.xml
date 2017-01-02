@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/transaction_id"
+        android:layout_height="wrap_content"
+        android:text="000009"
+        app:layout_widthPercent="15%" />
+
+    <TextView
+        android:id="@+id/col_one"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/transaction_id"
+        android:text="|"
+        app:layout_widthPercent="2%" />
+
+    <TextView
+        android:id="@+id/sale_quant"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/col_one"
+        android:text="99999"
+        app:layout_widthPercent="12%" />
+
+    <TextView
+        android:id="@+id/col_two"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/sale_quant"
+        android:text="|"
+        app:layout_widthPercent="2%" />
+
+    <TextView
+        android:id="@+id/edits"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/col_two"
+        android:text="99999"
+        app:layout_widthPercent="12%" />
+
+    <TextView
+        android:id="@+id/col_three"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/edits"
+        android:text="|"
+        app:layout_widthPercent="2%" />
+
+    <TextView
+        android:id="@+id/order_quant"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/col_three"
+        android:text="99999"
+        app:layout_widthPercent="12%" />
+
+    <TextView
+        android:id="@+id/col_four"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/order_quant"
+        android:text="|"
+        app:layout_widthPercent="2%" />
+
+    <TextView
+        android:id="@+id/order_received"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/col_four"
+        android:text="99999"
+        app:layout_widthPercent="12%" />
+
+    <TextView
+        android:id="@+id/col_five"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/order_received"
+        android:text=" | "
+        app:layout_widthPercent="2%" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/col_five"
+         />
+
+
+</android.support.percent.PercentRelativeLayout>

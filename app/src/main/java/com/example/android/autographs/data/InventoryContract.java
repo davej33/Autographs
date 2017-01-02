@@ -27,6 +27,7 @@ public class InventoryContract {
         // table
         public static final String INV_TABLE_NAME = "inventory";
 
+
         // column headers
         public static final String _ID = BaseColumns._ID;
         public static final String ITEM_NAME = "name";
@@ -40,15 +41,18 @@ public class InventoryContract {
     public abstract static class InventoryUpdates implements BaseColumns {
 
         // table to track sales, purchases, and manual inventory updates
-        public static final String UPD_TABLE_NAME = "updates";
+        public static final String UPDATE_TABLE_NAME = "updates";
 
         // column headers
         public static final String UPDATE_ID = BaseColumns._ID;
         public static final String UPDATE_ITEM_NAME = "name";
         public static final String UPDATE_ITEM_ID = "item_id";
-        public static final String UPDATE_TYPE = "type";
-        public static final String UPDATE_DATE = "date";
-        public static final String PURCHASE_RECEIVED = "order_received";
+        public static final String UPDATE_SALE_QUANTITY = "sale_quantity";
+        public static final String UPDATE_SALE_PRICE = "sale_price";
+        public static final String UPDATE_PURCH_QUANTITY = "purchase_quantity";
+        public static final String UPDATE_PURCH_PRICE = "purchase_price";
+        public static final String UPDATE_PURCHASE_RECEIVED = "order_received";
+        public static final String UPDATE_TRANSACTION_DATETIME = "transaction_date";
 
     }
 

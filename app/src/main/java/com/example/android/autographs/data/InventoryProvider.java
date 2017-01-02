@@ -66,11 +66,11 @@ public class InventoryProvider extends ContentProvider {
                         selection, selectionArgs, null, null, sortOrder);
                 break;
             case UPDATES_TABLE:
-                cursor = db.query(InventoryUpdates.UPD_TABLE_NAME, projection,
+                cursor = db.query(InventoryUpdates.UPDATE_TABLE_NAME, projection,
                         selection, selectionArgs, null, null, sortOrder);
                 break;
             case UPDATES_ID:
-                selection = InventoryUpdates.UPD_TABLE_NAME + "=?";
+                selection = InventoryUpdates.UPDATE_TABLE_NAME + "=?";
                 selectionArgs = new String[]{String.valueOf(ContentUris.parseId(uri))};
                 cursor = db.query(Inventory.INV_TABLE_NAME, projection,
                         selection, selectionArgs, null, null, sortOrder);

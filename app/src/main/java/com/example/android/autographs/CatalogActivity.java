@@ -21,6 +21,9 @@ import android.widget.Toast;
 import com.example.android.autographs.data.InventoryContract;
 import com.example.android.autographs.data.InventoryContract.Inventory;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     InventoryCursorAdapter mCursorAdapter;
@@ -67,18 +70,45 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     public void insertItem() {
 
+        String testName = "Test Item";
+        double testSalePrice = 12.50;
+        int testQuant = 5;
+        String testSup = "Test Supplier";
+        double testPurchasePrice = 10.00;
+        int testReceived = 0;
+        String testTransactionTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new java.util.Date());
+
+
+        // insert values into Inventory
         ContentValues dummyItem = new ContentValues();
         dummyItem.put(
-                Inventory.ITEM_NAME, "Test Item");
+                Inventory.ITEM_NAME, testName);
         dummyItem.put(
-                Inventory.ITEM_SALE_PRICE, 12.337);
+                Inventory.ITEM_SALE_PRICE, testSalePrice);
         dummyItem.put(
-                Inventory.ITEM_QUANTITY, 5);
+                Inventory.ITEM_QUANTITY, testQuant);
         dummyItem.put(
-                Inventory.ITEM_SUPPLIER, "Test Supplier");
+                Inventory.ITEM_SUPPLIER, testSup);
 
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
+
+        long testItemIdLong = ContentUris.parseId(dummyUri);
+
+
+        // insert values into Updates
+        ContentValues dummyInsertUpdates = new ContentValues();
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_ID, testItemIdLong);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, testQuant);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, testQuant);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testReceived);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
+
+        Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
+
+
     }
 
     @Override

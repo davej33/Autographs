@@ -59,22 +59,14 @@
             android:layout_height="match_parent"
             app:layout_widthPercent="67%"
             app:layout_marginLeftPercent="3%"
+            android:stretchColumns="*"
             />
-
-        <Button
-            android:id="@+id/details_adjust"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%"
-            android:layout_alignParentRight="true"
-            android:text="@string/detail_adjust"
-             />
 
         <Button
             android:id="@+id/details_place_order"
             app:layout_heightPercent="25%"
             app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/details_adjust"
             android:text="@string/detail_place_order" />
 
         <Button
@@ -86,11 +78,20 @@
             android:text="@string/detail_order_received" />
 
         <Button
+            android:id="@+id/details_adjust"
+            app:layout_heightPercent="25%"
+            app:layout_widthPercent="30%"
+            android:layout_below="@id/details_order_received"
+            android:layout_alignParentRight="true"
+            android:text="@string/detail_adjust"
+            />
+
+        <Button
             android:id="@+id/details_sale"
             app:layout_heightPercent="25%"
             app:layout_widthPercent="30%"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/details_order_received"
+            android:layout_below="@+id/details_adjust"
             android:text="@string/detail_sale" />
     </android.support.percent.PercentRelativeLayout>
 </android.support.percent.PercentRelativeLayout>

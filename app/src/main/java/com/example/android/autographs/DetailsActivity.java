@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -44,6 +45,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+
+        ListView listView = (ListView) findViewById(R.id.item_transaction_history);
+        UpdatesCursorAdapter cursorAdapter = new UpdatesCursorAdapter(this, null);
+        listView.setAdapter(cursorAdapter);
 
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
