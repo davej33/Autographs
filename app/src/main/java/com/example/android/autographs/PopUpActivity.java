@@ -1,17 +1,24 @@
 package com.example.android.autographs;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
 
 /**
  * Created by dnj on 1/3/17.
@@ -20,6 +27,7 @@ import com.example.android.autographs.data.InventoryContract;
 public class PopUpActivity extends AppCompatActivity {
 
     Uri mCurrentUri;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,7 +50,7 @@ public class PopUpActivity extends AppCompatActivity {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
                 final int itemsSoldInt = Integer.parseInt(itemsSold.getText().toString());
 
                 int newInventory = DetailsActivity.mQuantity - itemsSoldInt;
@@ -54,9 +62,19 @@ public class PopUpActivity extends AppCompatActivity {
 
                 ContentValues values = new ContentValues();
                 values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
-
                 int saleUpdate = getContentResolver().update(mCurrentUri, values, null, null);
-                if(saleUpdate > 0){
+
+
+                ContentValues updateTableValues = new ContentValues();
+                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, DetailsActivity.mName);
+                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, itemsSoldInt);
+                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
+
+                Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
+                long UriId = ContentUris.parseId(updTableReturnUri);
+                Log.e(LOG_TAG, "UriID: " + UriId);
+
+                if(saleUpdate > 0 && UriId > 0){
                     Toast.makeText(PopUpActivity.this, "Successful Inventory Update", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PopUpActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();

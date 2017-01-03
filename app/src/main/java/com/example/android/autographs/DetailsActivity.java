@@ -24,7 +24,6 @@ import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 
-import static com.example.android.autographs.R.id.quantity;
 import static com.example.android.autographs.R.layout.activity_details;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
@@ -284,10 +283,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
 
-                    mName = data.getString(nameCol);
+                    String name = data.getString(nameCol);
                     Double price = data.getDouble(priceCol);
                     String priceString = String.valueOf(price);
-                    mQuantity = data.getInt(quantCol);
+                    int quantity = data.getInt(quantCol);
                     String quantString = String.valueOf(quantity);
                     String supplier = data.getColumnName(supCol);
 
@@ -295,6 +294,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     mPriceInsert.setText(priceString);
                     mQuantInsert.setText(quantString);
                     mSupInsert.setText(supplier);
+
+                    mQuantity = quantity;
+                    mName = name;
                 }
                 break;
             case 1:

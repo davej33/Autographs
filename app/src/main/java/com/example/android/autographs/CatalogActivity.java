@@ -77,19 +77,15 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         String testSup = "Test Supplier";
         double testPurchasePrice = 10.00;
         int testReceived = 0;
-        String testTransactionTime = new SimpleDateFormat("MMM-dd-yy hh:mm", Locale.US).format(new java.util.Date());
+        String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
 
         // insert values into Inventory
         ContentValues dummyItem = new ContentValues();
-        dummyItem.put(
-                Inventory.ITEM_NAME, testName);
-        dummyItem.put(
-                Inventory.ITEM_SALE_PRICE, testSalePrice);
-        dummyItem.put(
-                Inventory.ITEM_QUANTITY, testQuant);
-        dummyItem.put(
-                Inventory.ITEM_SUPPLIER, testSup);
+        dummyItem.put(Inventory.ITEM_NAME, testName);
+        dummyItem.put(Inventory.ITEM_SALE_PRICE, testSalePrice);
+        dummyItem.put(Inventory.ITEM_QUANTITY, testQuant);
+        dummyItem.put(Inventory.ITEM_SUPPLIER, testSup);
 
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
@@ -101,7 +97,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // insert values into Updates
         ContentValues dummyInsertUpdates = new ContentValues();
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_ID, testItemIdLong);
+        //dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_ID, testItemIdLong);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, testQuant);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, testQuant);
@@ -137,8 +133,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     }
 
     private void deleteAll() {
-        int deletedRows = getContentResolver().delete(InventoryContract.INVENTORY_CONTENT_URI, null,null);
-        if(deletedRows == 0){
+        int deletedRows = getContentResolver().delete(InventoryContract.INVENTORY_CONTENT_URI, null, null);
+        if (deletedRows == 0) {
             Toast.makeText(this, "Deletion Failed", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "Successful Deletion", Toast.LENGTH_SHORT).show();

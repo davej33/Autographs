@@ -33,7 +33,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
         String SQL_TABLE2_CREATE = "CREATE TABLE " + InventoryUpdates.UPDATE_TABLE_NAME + " ("
                 + InventoryUpdates.UPDATE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + InventoryUpdates.UPDATE_ITEM_NAME + " TEXT NOT NULL, "
-                + InventoryUpdates.UPDATE_ITEM_ID + " INTEGER NOT NULL, "
+                //+ InventoryUpdates.UPDATE_ITEM_ID + " INTEGER NOT NULL, "
                 + InventoryUpdates.UPDATE_SALE_QUANTITY + " INTEGER, "
                 + InventoryUpdates.UPDATE_SALE_PRICE + " REAL, "
                 + InventoryUpdates.UPDATE_PURCH_QUANTITY + " INTEGER, "
