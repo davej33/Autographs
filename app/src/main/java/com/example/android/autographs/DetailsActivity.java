@@ -74,6 +74,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             invalidateOptionsMenu();
             PercentRelativeLayout buttonsLayout = (PercentRelativeLayout) findViewById(R.id.item_inventory_buttons);
             buttonsLayout.setVisibility(View.GONE);
+            PercentRelativeLayout listLayout = (PercentRelativeLayout) findViewById(R.id.list_group_view);
+            listLayout.setVisibility(View.GONE);
+
         }
 
         // get item view objects
@@ -288,30 +291,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 break;
             case 1:
                 mUpdateCursorAdapter.swapCursor(data);
-                /*
-                if(data.moveToFirst()){
-                    int tranCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_ID);
-                    int saleCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY);
-                    int orderCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY);
-                    int recCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED);
-                    int editCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT);
-                    int dateCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME);
-
-                    int tranID = data.getInt(tranCol);
-                    int sales = data.getInt(saleCol);
-                    int orders = data.getInt(orderCol);
-                    int recvd = data.getInt(recCol);
-                    int edit = data.getInt(editCol);
-                    String date = data.getString(dateCol);
-
-                    mTransactionID.setText(tranID);
-                    mSaleQuant.setText(sales);
-                    mOrderQuant.setText(orders);
-                    mOrderRecQuant.setText(recvd);
-                    mEdit.setText(edit);
-                    mDate.setText(date);
-                }*/
-
                 break;
             default:
                 throw new IllegalArgumentException();

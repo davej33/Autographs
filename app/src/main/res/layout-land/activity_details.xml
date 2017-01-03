@@ -6,50 +6,44 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
-    <ImageView
-        android:id="@+id/image"
-        android:src="@mipmap/ic_launcher"
-        app:layout_heightPercent="48%"
-        app:layout_widthPercent="30%" />
-
     <EditText
         android:id="@+id/insert_item_name"
-        app:layout_widthPercent="30%"
-        android:layout_toRightOf="@+id/image"
         android:hint="@string/detail_hint_insert"
-        app:layout_heightPercent="12%" />
+        app:layout_heightPercent="12%"
+        app:layout_widthPercent="66%"
+        app:layout_marginPercent="2%"/>
 
     <EditText
         android:id="@+id/insert_price"
-        android:layout_width="match_parent"
         android:layout_below="@+id/insert_item_name"
-        android:layout_toRightOf="@+id/image"
         android:hint="@string/detail_hint_price"
         android:inputType="numberDecimal"
-        app:layout_heightPercent="12%" />
+        app:layout_heightPercent="12%"
+        app:layout_widthPercent="66%"
+        app:layout_marginPercent="2%"/>
 
     <EditText
         android:id="@+id/insert_quantity"
-        android:layout_width="match_parent"
         android:layout_below="@+id/insert_price"
-        android:layout_toRightOf="@+id/image"
         android:hint="@string/detail_hint_quantity"
         android:inputType="numberDecimal"
-        app:layout_heightPercent="12%" />
+        app:layout_heightPercent="12%"
+        app:layout_widthPercent="66%"
+        app:layout_marginPercent="2%"/>
 
     <EditText
         android:id="@+id/insert_supplier"
-        android:layout_width="match_parent"
         android:layout_below="@+id/insert_quantity"
-        android:layout_toRightOf="@+id/image"
         android:hint="@string/detail_hint_supplier"
-        app:layout_heightPercent="12%" />
+        app:layout_heightPercent="12%"
+        app:layout_widthPercent="66%"
+        app:layout_marginPercent="2%"/>
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/item_inventory_buttons"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
+
         <Button
             android:id="@+id/details_adjust"
             android:layout_alignParentRight="true"
@@ -83,17 +77,89 @@
     </android.support.percent.PercentRelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
-        android:id="@+id/buttons_group_view"
+        android:id="@+id/list_group_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:layout_below="@id/insert_supplier"
-        app:layout_marginRightPercent="3%">
+        app:layout_marginPercent="2%"
+        app:layout_widthPercent="66%"
+        android:background="@android:color/holo_blue_light">
 
-        <ListView
-            android:id="@+id/item_transaction_history"
-            android:layout_height="match_parent"
-            app:layout_marginLeftPercent="3%"
-            app:layout_widthPercent="67%" />
+        <android.support.percent.PercentRelativeLayout
+            android:id="@+id/list_headers_land"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/transaction_id"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:text="@string/header_id"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+
+                app:layout_widthPercent="16%" />
+
+            <TextView
+                android:id="@+id/edits"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/transaction_id"
+                android:gravity="center_horizontal"
+                android:text="@string/header_edit"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:layout_widthPercent="15%" />
+
+            <TextView
+                android:id="@+id/sale_quant"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/edits"
+                android:gravity="center_horizontal"
+                android:text="@string/header_sale"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:layout_widthPercent="14%" />
+
+            <TextView
+                android:id="@+id/order_quant"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/sale_quant"
+                android:gravity="center_horizontal"
+                android:text="@string/header_order"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:layout_widthPercent="14%" />
+
+
+            <TextView
+                android:id="@+id/order_received"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/order_quant"
+                android:gravity="center_horizontal"
+                android:text="@string/header_recvd"
+                android:textAllCaps="true"
+                android:textStyle="bold"
+                app:layout_widthPercent="15%" />
+
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/order_received"
+                android:gravity="center_horizontal"
+                android:text="@string/header_date"
+                android:textAllCaps="true"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/item_transaction_history"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/transaction_id"
+                app:layout_marginLeftPercent="3%" />
+        </android.support.percent.PercentRelativeLayout>
+
+
 
 
     </android.support.percent.PercentRelativeLayout>
