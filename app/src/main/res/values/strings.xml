@@ -37,4 +37,12 @@
     <string name="detail_hint_quantity">Quantity</string>
     <string name="detail_hint_supplier">Supplier</string>
 
+    // list headers
+    <string name="header_id">ID</string>
+    <string name="header_sale">sale</string>
+    <string name="header_order">ordr</string>
+    <string name="header_recvd">rcvd</string>
+    <string name="header_edit">edit</string>
+    <string name="header_date">Time</string>
+
 </resources>

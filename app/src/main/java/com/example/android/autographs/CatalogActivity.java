@@ -77,7 +77,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         String testSup = "Test Supplier";
         double testPurchasePrice = 10.00;
         int testReceived = 0;
-        String testTransactionTime = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss", Locale.US).format(new java.util.Date());
+        String testTransactionTime = new SimpleDateFormat("MMM-dd-yy hh:mm", Locale.US).format(new java.util.Date());
 
 
         // insert values into Inventory
@@ -109,7 +109,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
-        int count =
         Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);
 
 

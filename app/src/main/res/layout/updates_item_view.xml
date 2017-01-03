@@ -8,6 +8,7 @@
         android:id="@+id/transaction_id"
         android:layout_height="wrap_content"
         android:text="000009"
+        android:gravity="center_horizontal"
         app:layout_widthPercent="15%" />
 
     <TextView
@@ -15,10 +16,12 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/transaction_id"
         android:text="|"
+        android:gravity="center_horizontal"
         app:layout_widthPercent="2%" />
 
     <TextView
         android:id="@+id/sale_quant"
+        android:gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/col_one"
         android:text="99999"
@@ -28,6 +31,7 @@
         android:id="@+id/col_two"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/sale_quant"
+        android:gravity="center_horizontal"
         android:text="|"
         app:layout_widthPercent="2%" />
 
@@ -35,6 +39,7 @@
         android:id="@+id/edits"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/col_two"
+        android:gravity="center_horizontal"
         android:text="99999"
         app:layout_widthPercent="12%" />
 
@@ -48,6 +53,7 @@
     <TextView
         android:id="@+id/order_quant"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:layout_toRightOf="@id/col_three"
         android:text="99999"
         app:layout_widthPercent="12%" />
@@ -63,6 +69,7 @@
         android:id="@+id/order_received"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/col_four"
+        android:gravity="center_horizontal"
         android:text="99999"
         app:layout_widthPercent="12%" />
 
