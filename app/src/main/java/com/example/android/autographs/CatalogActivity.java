@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,6 +94,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
 
+        Log.e("Catalog Activity", "Dummy Inventory Insert: " + dummyUri);
         long testItemIdLong = ContentUris.parseId(dummyUri);
 
 
@@ -107,6 +109,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
+        int count =
+        Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);
 
 
     }

@@ -12,6 +12,8 @@ import android.util.Log;
 import com.example.android.autographs.data.InventoryContract.Inventory;
 import com.example.android.autographs.data.InventoryContract.InventoryUpdates;
 
+import static android.R.attr.id;
+
 /**
  * Created by dnj on 12/19/16.
  */
@@ -92,6 +94,10 @@ public class InventoryProvider extends ContentProvider {
                 return InventoryContract.CONTENT_ITEM_TYPE;
             case INVENTORY_TABLE:
                 return InventoryContract.CONTENT_LIST_TYPE;
+            case UPDATES_ID:
+                return InventoryContract.UPD_CONTENT_ITEM_TYPE;
+            case UPDATES_TABLE:
+                return InventoryContract.UPD_CONTENT_LIST_TYPE;
             default:
                 throw new IllegalArgumentException("No type match for: " + uri);
         }
@@ -105,47 +111,68 @@ public class InventoryProvider extends ContentProvider {
         switch (match) {
             case INVENTORY_TABLE:
                 return insertItem(uri, values);
+            case UPDATES_TABLE:
+                return insertItem(uri, values);
         }
         return null;
     }
 
     private Uri insertItem(Uri uri, ContentValues values) {
 
-        // empty name check
-        String nameValidation = values.getAsString(Inventory.ITEM_NAME);
-        if (nameValidation.isEmpty()) {
-            Log.e(LOG_TAG, "Empty name");
-            throw new IllegalArgumentException("Item requires a name");
+        SQLiteDatabase db = null;
+        long idReturn;
+
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case INVENTORY_TABLE:
+
+                // empty name check
+                String nameValidation = values.getAsString(Inventory.ITEM_NAME);
+                if (nameValidation.isEmpty()) {
+                    Log.e(LOG_TAG, "Empty name");
+                    throw new IllegalArgumentException("Item requires a name");
+                }
+
+                // price check
+                long priceCheck = values.getAsLong(Inventory.ITEM_SALE_PRICE);
+                if (priceCheck <= 0 || priceCheck > 10000) {
+                    throw new IllegalArgumentException("Please enter valid price");
+                }
+
+                // quantity check
+                int quantCheck = values.getAsInteger(Inventory.ITEM_QUANTITY);
+                if (quantCheck <= 0 || quantCheck > 5000) {
+                    throw new IllegalArgumentException("Please enter valid quantity");
+                }
+
+                // provider check
+                String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
+                if (provCheck.isEmpty()) {
+                    throw new IllegalArgumentException("Please enter supplier");
+                }
+
+                db = mDbHelper.getWritableDatabase();
+
+                idReturn = db.insert(Inventory.INV_TABLE_NAME, null, values);
+
+                if (id == -1) {
+                    Log.e(LOG_TAG, "Failed to insert row: " + uri);
+                    return null;
+                }
+
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
+            case UPDATES_TABLE:
+
+
+                db = mDbHelper.getWritableDatabase();
+                idReturn = db.insert(InventoryUpdates.UPDATE_TABLE_NAME, null, values);
+                if (idReturn == -1) {
+                    Log.e(LOG_TAG, "Failed to insert item");
+                    return null;
+                }
+
         }
-
-        // price check
-        long priceCheck = values.getAsLong(Inventory.ITEM_SALE_PRICE);
-        if (priceCheck <= 0 || priceCheck > 10000) {
-            throw new IllegalArgumentException("Please enter valid price");
-        }
-
-        // quantity check
-        int quantCheck = values.getAsInteger(Inventory.ITEM_QUANTITY);
-        if (quantCheck <= 0 || quantCheck > 5000) {
-            throw new IllegalArgumentException("Please enter valid quantity");
-        }
-
-        // provider check
-        String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
-        if (provCheck.isEmpty()) {
-            throw new IllegalArgumentException("Please enter supplier");
-        }
-
-        SQLiteDatabase db = mDbHelper.getWritableDatabase();
-
-        long id = db.insert(Inventory.INV_TABLE_NAME, null, values);
-
-        if (id == -1) {
-            Log.e(LOG_TAG, "Failed to insert row: " + uri);
-            return null;
-        }
-
-        getContext().getContentResolver().notifyChange(uri, null);
 
         return ContentUris.withAppendedId(uri, id);
     }
@@ -171,7 +198,7 @@ public class InventoryProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Unable to delete using uri: " + uri);
         }
-        if(deleteID != 0){
+        if (deleteID != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 
@@ -236,7 +263,7 @@ public class InventoryProvider extends ContentProvider {
 
         int updateID = db.update(Inventory.INV_TABLE_NAME, values, selection, selectionArgs);
 
-        if(updateID != 0){
+        if (updateID != 0) {
             getContext().getContentResolver().notifyChange(uri, null);
         }
 

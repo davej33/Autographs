@@ -31,8 +31,8 @@ public class UpdatesCursorAdapter extends CursorAdapter {
 
         // set id
         TextView transactionId = (TextView) listItemView.findViewById(R.id.transaction_id);
-        int nameCol = cursor.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_ID);
-        String id = cursor.getString(nameCol);
+        int transactionCol = cursor.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_ID);
+        String id = cursor.getString(transactionCol);
         transactionId.setText(id);
 
         // set item sales
@@ -47,6 +47,23 @@ public class UpdatesCursorAdapter extends CursorAdapter {
         String orderString = Integer.toString(cursor.getInt(orderCol));
         orderView.setText(orderString);
 
-        //
+        // set order received
+        TextView orderRecView = (TextView) listItemView.findViewById(R.id.order_received);
+        int orderRecCol = cursor.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED);
+        String orderRecString = Integer.toString(cursor.getInt(orderRecCol));
+        orderRecView.setText(orderRecString);
+
+        // set manual edit
+        TextView editView = (TextView) listItemView.findViewById(R.id.edits);
+        int editCol = cursor.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT);
+        String editString = Integer.toString(cursor.getInt(editCol));
+        editView.setText(editString);
+
+        // set data and time of transaction
+        TextView dateView = (TextView) listItemView.findViewById(R.id.date);
+        int dateCol = cursor.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME);
+        String dateString = cursor.getString(dateCol);
+        dateView.setText(dateString);
+
     }
 }

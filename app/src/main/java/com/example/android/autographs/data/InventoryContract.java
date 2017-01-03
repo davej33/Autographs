@@ -27,7 +27,6 @@ public class InventoryContract {
         // table
         public static final String INV_TABLE_NAME = "inventory";
 
-
         // column headers
         public static final String _ID = BaseColumns._ID;
         public static final String ITEM_NAME = "name";
@@ -52,6 +51,7 @@ public class InventoryContract {
         public static final String UPDATE_PURCH_QUANTITY = "purchase_quantity";
         public static final String UPDATE_PURCH_PRICE = "purchase_price";
         public static final String UPDATE_PURCHASE_RECEIVED = "order_received";
+        public static final String UPDATE_MANUAL_EDIT = "edits";
         public static final String UPDATE_TRANSACTION_DATETIME = "transaction_date";
 
     }
@@ -61,4 +61,10 @@ public class InventoryContract {
 
     public static final String CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
             "/" + CONTENT_AUTHORITY + "/" + INVENTORY_PATH;
+
+    public static final String UPD_CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
+            "/" + CONTENT_AUTHORITY + "/" + UPDATES_PATH;
+
+    public static final String UPD_CONTENT_ITEM_TYPE = ContentResolver.CURSOR_ITEM_BASE_TYPE +
+            "/" + CONTENT_AUTHORITY + "/" + UPDATES_PATH;
 }

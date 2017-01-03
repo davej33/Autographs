@@ -39,7 +39,8 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
                 + InventoryUpdates.UPDATE_SALE_PRICE + " REAL, "
                 + InventoryUpdates.UPDATE_PURCH_QUANTITY + " INTEGER, "
                 + InventoryUpdates.UPDATE_PURCH_PRICE + " REAL, "
-                + InventoryUpdates.UPDATE_PURCHASE_RECEIVED + " INTEGER NOT NULL, "
+                + InventoryUpdates.UPDATE_PURCHASE_RECEIVED + " INTEGER, "
+                + InventoryUpdates.UPDATE_MANUAL_EDIT + " INTEGER, "
                 + InventoryUpdates.UPDATE_TRANSACTION_DATETIME + " TEXT NOT NULL)";
 
         db.execSQL(SQL_TABLE2_CREATE);

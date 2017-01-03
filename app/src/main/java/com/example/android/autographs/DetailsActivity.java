@@ -19,6 +19,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -26,12 +27,23 @@ import com.example.android.autographs.data.InventoryContract;
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     // globals
-    EditText mNameInsert;
-    EditText mPriceInsert;
-    EditText mQuantInsert;
-    EditText mSupInsert;
+    private EditText mNameInsert;
+    private EditText mPriceInsert;
+    private EditText mQuantInsert;
+    private EditText mSupInsert;
+
+    private TextView mTransactionID;
+    private TextView mSaleQuant;
+    private TextView mOrderQuant;
+    private TextView mOrderRecQuant;
+    private TextView mEdit;
+    private TextView mDate;
+
+    UpdatesCursorAdapter mUpdateCursorAdapter;
+
     Uri mCurrentItemUri;
-    private static final int CURSOR_LOADER_ID = 0;
+    private static final int INV_CURSOR_LOADER_ID = 0;
+    private static final int UPD_CURSOR_LOADER_ID = 1;
     private boolean mItemChanged = false;
     private View.OnTouchListener mOnTouch = new View.OnTouchListener() {
         @Override
@@ -47,15 +59,16 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         setContentView(R.layout.activity_details);
 
         ListView listView = (ListView) findViewById(R.id.item_transaction_history);
-        UpdatesCursorAdapter cursorAdapter = new UpdatesCursorAdapter(this, null);
-        listView.setAdapter(cursorAdapter);
+        mUpdateCursorAdapter = new UpdatesCursorAdapter(this, null);
+        listView.setAdapter(mUpdateCursorAdapter);
 
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
 
         if (mCurrentItemUri != null) {
             setTitle(R.string.detail_edit_item);
-            getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
+            getLoaderManager().initLoader(INV_CURSOR_LOADER_ID, null, this);
+            getLoaderManager().initLoader(UPD_CURSOR_LOADER_ID, null, this);
         } else {
             setTitle(R.string.detail_insert);
             invalidateOptionsMenu();
@@ -63,7 +76,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             buttonsLayout.setVisibility(View.GONE);
         }
 
-        // get view objects
+        // get item view objects
         mNameInsert = (EditText) findViewById(R.id.insert_item_name);
         mPriceInsert = (EditText) findViewById(R.id.insert_price);
         mQuantInsert = (EditText) findViewById(R.id.insert_quantity);
@@ -215,37 +228,93 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = {
-                InventoryContract.Inventory.ITEM_NAME,
-                InventoryContract.Inventory.ITEM_SALE_PRICE,
-                InventoryContract.Inventory.ITEM_QUANTITY,
-                InventoryContract.Inventory.ITEM_SUPPLIER};
+        CursorLoader loader = null;
+        if (id == 0) {
+            String[] projection = {
+                    InventoryContract.Inventory.ITEM_NAME,
+                    InventoryContract.Inventory.ITEM_SALE_PRICE,
+                    InventoryContract.Inventory.ITEM_QUANTITY,
+                    InventoryContract.Inventory.ITEM_SUPPLIER};
 
-        return new CursorLoader(this,
-                mCurrentItemUri, projection,
-                null, null, null);
+            loader = new CursorLoader(this,
+                    mCurrentItemUri, projection,
+                    null, null, null);
+        }
+        if (id == 1) {
+            String[] projection = {
+                    InventoryContract.InventoryUpdates.UPDATE_ID,
+                    InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY,
+                    InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY,
+                    InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED,
+                    InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT,
+                    InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME
+            };
+
+            String selection = InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME + "=?";
+            String[] selectionArgs = {"Test Item"};
+            loader = new CursorLoader(this, InventoryContract.UPDATES_CONTENT_URI, projection,
+                    selection, selectionArgs, null);
+        }
+
+        return loader;
+
+
     }
+
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
-        if (data.moveToFirst()) {
-            int nameCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_NAME);
-            int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
-            int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
-            int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
+        switch (loader.getId()) {
+            case 0:
+                if (data.moveToFirst()) {
+                    int nameCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_NAME);
+                    int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
+                    int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
+                    int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
 
-            String name = data.getString(nameCol);
-            Double price = data.getDouble(priceCol);
-            String priceString = String.valueOf(price);
-            int quantity = data.getInt(quantCol);
-            String quantString = String.valueOf(quantity);
-            String supplier = data.getColumnName(supCol);
+                    String name = data.getString(nameCol);
+                    Double price = data.getDouble(priceCol);
+                    String priceString = String.valueOf(price);
+                    int quantity = data.getInt(quantCol);
+                    String quantString = String.valueOf(quantity);
+                    String supplier = data.getColumnName(supCol);
 
-            mNameInsert.setText(name);
-            mPriceInsert.setText(priceString);
-            mQuantInsert.setText(quantString);
-            mSupInsert.setText(supplier);
+                    mNameInsert.setText(name);
+                    mPriceInsert.setText(priceString);
+                    mQuantInsert.setText(quantString);
+                    mSupInsert.setText(supplier);
+                }
+                break;
+            case 1:
+                mUpdateCursorAdapter.swapCursor(data);
+                /*
+                if(data.moveToFirst()){
+                    int tranCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_ID);
+                    int saleCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY);
+                    int orderCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY);
+                    int recCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED);
+                    int editCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT);
+                    int dateCol = data.getColumnIndex(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME);
+
+                    int tranID = data.getInt(tranCol);
+                    int sales = data.getInt(saleCol);
+                    int orders = data.getInt(orderCol);
+                    int recvd = data.getInt(recCol);
+                    int edit = data.getInt(editCol);
+                    String date = data.getString(dateCol);
+
+                    mTransactionID.setText(tranID);
+                    mSaleQuant.setText(sales);
+                    mOrderQuant.setText(orders);
+                    mOrderRecQuant.setText(recvd);
+                    mEdit.setText(edit);
+                    mDate.setText(date);
+                }*/
+
+                break;
+            default:
+                throw new IllegalArgumentException();
         }
     }
 
