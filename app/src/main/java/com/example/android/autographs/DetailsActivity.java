@@ -17,12 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
+
+import static com.example.android.autographs.R.id.quantity;
+import static com.example.android.autographs.R.layout.activity_details;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -32,12 +35,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mQuantInsert;
     private EditText mSupInsert;
 
-    private TextView mTransactionID;
-    private TextView mSaleQuant;
-    private TextView mOrderQuant;
-    private TextView mOrderRecQuant;
-    private TextView mEdit;
-    private TextView mDate;
+    public static int mQuantity;
+    public static String mName;
 
     UpdatesCursorAdapter mUpdateCursorAdapter;
 
@@ -56,7 +55,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_details);
+        setContentView(activity_details);
 
         ListView listView = (ListView) findViewById(R.id.item_transaction_history);
         mUpdateCursorAdapter = new UpdatesCursorAdapter(this, null);
@@ -76,7 +75,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             buttonsLayout.setVisibility(View.GONE);
             PercentRelativeLayout listLayout = (PercentRelativeLayout) findViewById(R.id.list_group_view);
             listLayout.setVisibility(View.GONE);
-
         }
 
         // get item view objects
@@ -90,6 +88,17 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mPriceInsert.setOnTouchListener(mOnTouch);
         mQuantInsert.setOnTouchListener(mOnTouch);
         mSupInsert.setOnTouchListener(mOnTouch);
+
+        // buttons onClickListener and intent
+        Button saleButton = (Button) findViewById(R.id.details_sale);
+        saleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailsActivity.this, PopUpActivity.class);
+                intent.setData(mCurrentItemUri);
+                startActivity(intent);
+            }
+        });
 
     }
 
@@ -264,7 +273,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     }
 
-
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
@@ -276,14 +284,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
 
-                    String name = data.getString(nameCol);
+                    mName = data.getString(nameCol);
                     Double price = data.getDouble(priceCol);
                     String priceString = String.valueOf(price);
-                    int quantity = data.getInt(quantCol);
+                    mQuantity = data.getInt(quantCol);
                     String quantString = String.valueOf(quantity);
                     String supplier = data.getColumnName(supCol);
 
-                    mNameInsert.setText(name);
+                    mNameInsert.setText(mName);
                     mPriceInsert.setText(priceString);
                     mQuantInsert.setText(quantString);
                     mSupInsert.setText(supplier);

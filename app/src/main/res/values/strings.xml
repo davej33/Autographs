@@ -45,4 +45,8 @@
     <string name="header_edit">edit</string>
     <string name="header_date">Time</string>
 
+    // popup buttons
+    <string name="popup_ok">OK</string>
+    <string name="popup_cancel">CANCEL</string>
+
 </resources>
