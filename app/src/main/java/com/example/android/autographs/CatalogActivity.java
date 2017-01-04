@@ -25,17 +25,25 @@ import com.example.android.autographs.data.InventoryContract.Inventory;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
+
 public class CatalogActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+    public static int mQuantity;
+    public static String mName;
+    private String mPosition;
 
     InventoryCursorAdapter mCursorAdapter;
 
     private static final int CURSOR_LOADER_ID = 0;
+    private static final int GET_NAME_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
 
+        Log.e(LOG_TAG, "mName # 1: " + mName);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +70,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 Uri currentItemUri = ContentUris.withAppendedId(InventoryContract.INVENTORY_CONTENT_URI, id);
                 intent.setData(currentItemUri);
 
+                mPosition = String.valueOf(position+1);
+                Log.e(LOG_TAG, "mPosition String: " + mPosition);
+
+                getLoaderManager().initLoader(GET_NAME_LOADER_ID, null, CatalogActivity.this);
+                Log.e(LOG_TAG, "### 1.75: " + mName);
                 startActivity(intent);
             }
         });
@@ -97,12 +110,10 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         // insert values into Updates
         ContentValues dummyInsertUpdates = new ContentValues();
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
-        //dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_ID, testItemIdLong);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, testQuant);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, testQuant);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testReceived);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testQuant);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
+        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, testSup);
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
         Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);
@@ -145,20 +156,57 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
-        String[] projection = {
-                Inventory._ID,
-                Inventory.ITEM_NAME,
-                Inventory.ITEM_SALE_PRICE,
-                Inventory.ITEM_QUANTITY};
+        CursorLoader loader = null;
 
-        return new CursorLoader(this,
-                InventoryContract.INVENTORY_CONTENT_URI,
-                projection, null, null, null);
+        if (id == CURSOR_LOADER_ID) {
+            String[] projection = {
+                    Inventory._ID,
+                    Inventory.ITEM_NAME,
+                    Inventory.ITEM_SALE_PRICE,
+                    Inventory.ITEM_QUANTITY};
+
+            loader = new CursorLoader(this,
+                    InventoryContract.INVENTORY_CONTENT_URI,
+                    projection, null, null, null);
+        }
+
+        if (id == GET_NAME_LOADER_ID) {
+            String selection = Inventory._ID + "=?";
+            String[] selectionArgs = {mPosition};
+
+            String[] projection = {
+                    Inventory._ID,
+                    Inventory.ITEM_NAME,
+                    Inventory.ITEM_SALE_PRICE};
+
+            loader = new CursorLoader(this, InventoryContract.INVENTORY_CONTENT_URI,
+                    projection, selection, selectionArgs, null);
+        }
+        return loader;
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCursorAdapter.swapCursor(data);
+
+        switch (loader.getId()) {
+            case GET_NAME_LOADER_ID:
+                if (data.moveToFirst()) {
+                    int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
+                    int idCol = data.getColumnIndex(Inventory._ID);
+                    int nameCol = data.getColumnIndex(Inventory.ITEM_NAME);
+
+                    double p = data.getDouble(priceCol);
+                    int id = data.getInt(idCol);
+                    mName = data.getString(nameCol);
+                    Log.e(LOG_TAG, "id: " + id + " price: "+p+" mName # 1.5: " + mName );
+                }
+                break;
+            case CURSOR_LOADER_ID:
+                mCursorAdapter.swapCursor(data);
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
     }
 
     @Override

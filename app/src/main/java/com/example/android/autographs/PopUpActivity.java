@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -18,6 +19,7 @@ import com.example.android.autographs.data.InventoryContract;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import static com.example.android.autographs.CatalogActivity.mName;
 import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
 
 /**
@@ -26,7 +28,8 @@ import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
 
 public class PopUpActivity extends AppCompatActivity {
 
-    Uri mCurrentUri;
+    private Uri mCurrentUri;
+    private String mTransactionTime;
 
 
     @Override
@@ -34,6 +37,7 @@ public class PopUpActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.popup_layout);
 
+        Log.e(LOG_TAG, "mName # 7: " + mName);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -45,15 +49,20 @@ public class PopUpActivity extends AppCompatActivity {
         mCurrentUri = intent.getData();
         final EditText itemsSold = (EditText) findViewById(R.id.sale_quantity);
 
+        TextView itemName = (TextView) findViewById(R.id.sale_item_title);
+        itemName.setText(CatalogActivity.mName);
+
 
         Button okButton = (Button) findViewById(R.id.sale_purchase_button);
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
-                final int itemsSoldInt = Integer.parseInt(itemsSold.getText().toString());
 
-                int newInventory = DetailsActivity.mQuantity - itemsSoldInt;
+                mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+
+                final int itemsSoldInt = Integer.parseInt(itemsSold.getText().toString());
+                Log.e(LOG_TAG, "mName # 8: " + mName);
+                int newInventory = CatalogActivity.mQuantity - itemsSoldInt;
                 if (newInventory < 0) {
                     Toast.makeText(PopUpActivity.this, "Not enough inventory", Toast.LENGTH_SHORT).show();
                     //throw new IllegalArgumentException();
@@ -66,9 +75,9 @@ public class PopUpActivity extends AppCompatActivity {
 
 
                 ContentValues updateTableValues = new ContentValues();
-                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, DetailsActivity.mName);
+                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
                 updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, itemsSoldInt);
-                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
+                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
                 Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
                 long UriId = ContentUris.parseId(updTableReturnUri);
@@ -79,6 +88,7 @@ public class PopUpActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(PopUpActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
                 }
+                Log.e(LOG_TAG, "mName # 9: " + mName);
                 finish();
             }
         });

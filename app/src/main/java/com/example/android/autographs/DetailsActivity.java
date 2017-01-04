@@ -13,6 +13,7 @@ import android.support.percent.PercentRelativeLayout;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -24,7 +25,12 @@ import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
+import static com.example.android.autographs.CatalogActivity.mName;
 import static com.example.android.autographs.R.layout.activity_details;
+import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
@@ -33,9 +39,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mPriceInsert;
     private EditText mQuantInsert;
     private EditText mSupInsert;
-
-    public static int mQuantity;
-    public static String mName;
+    String mTransactionTime;
 
     UpdatesCursorAdapter mUpdateCursorAdapter;
 
@@ -56,9 +60,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(activity_details);
 
-        ListView listView = (ListView) findViewById(R.id.item_transaction_history);
-        mUpdateCursorAdapter = new UpdatesCursorAdapter(this, null);
-        listView.setAdapter(mUpdateCursorAdapter);
+        Log.e(LOG_TAG, "mName # 3: " + mName);
 
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
@@ -66,7 +68,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         if (mCurrentItemUri != null) {
             setTitle(R.string.detail_edit_item);
             getLoaderManager().initLoader(INV_CURSOR_LOADER_ID, null, this);
+            Log.e(LOG_TAG, "mName # 4: " + mName);
             getLoaderManager().initLoader(UPD_CURSOR_LOADER_ID, null, this);
+            Log.e(LOG_TAG, "mName # 5: " + mName);
         } else {
             setTitle(R.string.detail_insert);
             invalidateOptionsMenu();
@@ -75,6 +79,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             PercentRelativeLayout listLayout = (PercentRelativeLayout) findViewById(R.id.item_inventory_list);
             listLayout.setVisibility(View.GONE);
         }
+
+        ListView listView = (ListView) findViewById(R.id.item_transaction_history);
+        mUpdateCursorAdapter = new UpdatesCursorAdapter(this, null);
+        listView.setAdapter(mUpdateCursorAdapter);
 
         // get item view objects
         mNameInsert = (EditText) findViewById(R.id.insert_item_name);
@@ -93,6 +101,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.e(LOG_TAG, "mName # 6: " + mName);
                 Intent intent = new Intent(DetailsActivity.this, PopUpActivity.class);
                 intent.setData(mCurrentItemUri);
                 startActivity(intent);
@@ -130,23 +139,31 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
         insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
 
+        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+
+        ContentValues transactionValues = new ContentValues();
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, quantSet);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
         // insert into DB or update
         if (mCurrentItemUri == null) {
 
             Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
-
-            if (insertItem != null) {
-                Toast.makeText(this, "Successfully Added", Toast.LENGTH_SHORT).show();
+            Uri insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+            if (insertItem != null && insertTransaction != null) {
+                Toast.makeText(this, "Item Successfully Added", Toast.LENGTH_SHORT).show();
             } else {
                 Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
             }
         } else {
             int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
-            if (updateItem == 0) {
-                Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
+            Uri insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+            if (updateItem == 0 && insertTransaction == null) {
+                Toast.makeText(this, "Item Update Failed", Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(this, "Successful update", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Item Successfully Update", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -239,8 +256,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 
         CursorLoader loader = null;
-        if (id == 0) {
+        if (id == INV_CURSOR_LOADER_ID) {
             String[] projection = {
+                    InventoryContract.Inventory._ID,
                     InventoryContract.Inventory.ITEM_NAME,
                     InventoryContract.Inventory.ITEM_SALE_PRICE,
                     InventoryContract.Inventory.ITEM_QUANTITY,
@@ -250,9 +268,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     mCurrentItemUri, projection,
                     null, null, null);
         }
-        if (id == 1) {
+        if (id == UPD_CURSOR_LOADER_ID) {
             String[] projection = {
                     InventoryContract.InventoryUpdates.UPDATE_ID,
+                    InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME,
                     InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY,
                     InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY,
                     InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED,
@@ -261,7 +280,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             };
 
             String selection = InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME + "=?";
-            String[] selectionArgs = {"Test Item"};
+            String[] selectionArgs = {mName};
             loader = new CursorLoader(this, InventoryContract.UPDATES_CONTENT_URI, projection,
                     selection, selectionArgs, null);
         }
@@ -275,13 +294,16 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
 
         switch (loader.getId()) {
-            case 0:
+            case INV_CURSOR_LOADER_ID:
                 if (data.moveToFirst()) {
+                    int idCol = data.getColumnIndex(InventoryContract.Inventory._ID);
                     int nameCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_NAME);
                     int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
                     int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
 
+                    int id = data.getInt(idCol);
+                    Log.e(LOG_TAG, "id: " + id);
                     String name = data.getString(nameCol);
                     Double price = data.getDouble(priceCol);
                     String priceString = String.valueOf(price);
@@ -289,16 +311,16 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     String quantString = String.valueOf(quantity);
                     String supplier = data.getColumnName(supCol);
 
-                    mNameInsert.setText(mName);
+                    mNameInsert.setText(name);
                     mPriceInsert.setText(priceString);
                     mQuantInsert.setText(quantString);
                     mSupInsert.setText(supplier);
 
-                    mQuantity = quantity;
+                    CatalogActivity.mQuantity = quantity;
                     mName = name;
                 }
                 break;
-            case 1:
+            case UPD_CURSOR_LOADER_ID:
                 mUpdateCursorAdapter.swapCursor(data);
                 break;
             default:

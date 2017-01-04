@@ -33,7 +33,6 @@ public class InventoryContract {
         public static final String ITEM_SALE_PRICE = "sale_price";
         public static final String ITEM_QUANTITY = "quantity";
         public static final String ITEM_SUPPLIER = "supplier";
-        public static final String ITEM_IMAGE = "image";
 
     }
 
@@ -45,12 +44,12 @@ public class InventoryContract {
         // column headers
         public static final String UPDATE_ID = BaseColumns._ID;
         public static final String UPDATE_ITEM_NAME = "name";
-        public static final String UPDATE_ITEM_ID = "item_id";
         public static final String UPDATE_SALE_QUANTITY = "sale_quantity";
         public static final String UPDATE_SALE_PRICE = "sale_price";
         public static final String UPDATE_PURCH_QUANTITY = "purchase_quantity";
         public static final String UPDATE_PURCH_PRICE = "purchase_price";
         public static final String UPDATE_PURCHASE_RECEIVED = "order_received";
+        public static final String UPDATE_SUPPLIER = "supplier";
         public static final String UPDATE_MANUAL_EDIT = "edits";
         public static final String UPDATE_TRANSACTION_DATETIME = "transaction_date";
 
