@@ -78,7 +78,7 @@
     </android.support.percent.PercentRelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
-        android:id="@+id/list_group_view"
+        android:id="@+id/item_inventory_list"
         android:layout_width="match_parent"
         android:layout_below="@id/insert_supplier"
         app:layout_marginPercent="2%"

@@ -72,7 +72,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             invalidateOptionsMenu();
             PercentRelativeLayout buttonsLayout = (PercentRelativeLayout) findViewById(R.id.item_inventory_buttons);
             buttonsLayout.setVisibility(View.GONE);
-            PercentRelativeLayout listLayout = (PercentRelativeLayout) findViewById(R.id.list_group_view);
+            PercentRelativeLayout listLayout = (PercentRelativeLayout) findViewById(R.id.item_inventory_list);
             listLayout.setVisibility(View.GONE);
         }
 
@@ -98,7 +98,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 startActivity(intent);
             }
         });
-
     }
 
     public void saveItem() {

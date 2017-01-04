@@ -75,7 +75,7 @@ public class PopUpActivity extends AppCompatActivity {
                 Log.e(LOG_TAG, "UriID: " + UriId);
 
                 if(saleUpdate > 0 && UriId > 0){
-                    Toast.makeText(PopUpActivity.this, "Successful Inventory Update", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PopUpActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(PopUpActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
                 }

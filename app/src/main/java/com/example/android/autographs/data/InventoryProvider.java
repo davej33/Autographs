@@ -218,7 +218,6 @@ public class InventoryProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Update not available for: " + uri);
         }
-
     }
 
     private int updateItem(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
