@@ -171,7 +171,8 @@ public class InventoryProvider extends ContentProvider {
                     Log.e(LOG_TAG, "Failed to insert item");
                     return null;
                 }
-
+                getContext().getContentResolver().notifyChange(uri, null);
+                break;
         }
 
         return ContentUris.withAppendedId(uri, id);

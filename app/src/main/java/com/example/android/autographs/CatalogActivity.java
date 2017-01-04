@@ -70,7 +70,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                 Uri currentItemUri = ContentUris.withAppendedId(InventoryContract.INVENTORY_CONTENT_URI, id);
                 intent.setData(currentItemUri);
 
-                mPosition = String.valueOf(position+1);
+                mPosition = String.valueOf(position + 1);
                 Log.e(LOG_TAG, "mPosition String: " + mPosition);
 
                 getLoaderManager().initLoader(GET_NAME_LOADER_ID, null, CatalogActivity.this);
@@ -89,7 +89,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         int testQuant = 5;
         String testSup = "Test Supplier";
         double testPurchasePrice = 10.00;
-        int testReceived = 0;
         String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
 
@@ -117,8 +116,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
         Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);
-
-
     }
 
     @Override
@@ -198,7 +195,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                     double p = data.getDouble(priceCol);
                     int id = data.getInt(idCol);
                     mName = data.getString(nameCol);
-                    Log.e(LOG_TAG, "id: " + id + " price: "+p+" mName # 1.5: " + mName );
+                    Log.e(LOG_TAG, "id: " + id + " price: " + p + " mName # 1.5: " + mName);
                 }
                 break;
             case CURSOR_LOADER_ID:
