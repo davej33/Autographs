@@ -246,7 +246,7 @@ public class InventoryProvider extends ContentProvider {
         // quantity check
         if (values.containsKey(Inventory.ITEM_QUANTITY)) {
             int quantCheck = values.getAsInteger(Inventory.ITEM_QUANTITY);
-            if (quantCheck <= 0 || quantCheck > 10000) {
+            if (quantCheck < 0 || quantCheck > 10000) {
                 throw new IllegalArgumentException("Please enter valid quantity");
             }
         }

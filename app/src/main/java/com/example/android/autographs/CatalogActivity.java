@@ -86,7 +86,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         String testName = "Test Item";
         double testSalePrice = 12.50;
-        int testQuant = 5;
+        int testQuant = 0;
         String testSup = "Test Supplier";
         double testPurchasePrice = 10.00;
         String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());

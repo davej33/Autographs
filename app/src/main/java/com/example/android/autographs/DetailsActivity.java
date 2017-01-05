@@ -1,6 +1,7 @@
 package com.example.android.autographs;
 
 import android.app.LoaderManager;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.DialogInterface;
@@ -41,6 +42,12 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mSupInsert;
     String mTransactionTime;
 
+    DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            dialog.dismiss();
+        }
+    };
     UpdatesCursorAdapter mUpdateCursorAdapter;
 
     Uri mCurrentItemUri;
@@ -101,10 +108,50 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(LOG_TAG, "mName # 6: " + mName);
-                Intent intent = new Intent(DetailsActivity.this, PopUpActivity.class);
-                intent.setData(mCurrentItemUri);
-                startActivity(intent);
+                AlertDialog.Builder builder = new AlertDialog.Builder(DetailsActivity.this);
+                builder.setMessage(R.string.finalize_sale);
+                builder.setNegativeButton(R.string.no, dialogueDismiss);
+                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+
+                        int newInventory = CatalogActivity.mQuantity - 1;
+
+                        if (newInventory < 0) {
+                            Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_SHORT).show();
+                            finish();
+                        } else {
+
+                            ContentValues values = new ContentValues();
+                            values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
+                            int saleUpdate = getContentResolver().update(mCurrentItemUri, values, null, null);
+
+
+                            ContentValues updateTableValues = new ContentValues();
+                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
+                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, 1);
+                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+                            Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
+                            long UriId = ContentUris.parseId(updTableReturnUri);
+                            Log.e(LOG_TAG, "UriID: " + UriId);
+
+                            if (saleUpdate > 0 && UriId > 0) {
+                                Toast.makeText(DetailsActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(DetailsActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
+                            }
+                            Log.e(LOG_TAG, "mName # 9: " + mName);
+                            finish();
+                        }
+
+                    }
+                });
+                // create and show the AlertDialogue
+                AlertDialog alert = builder.create();
+                alert.show();
+
             }
         });
     }
@@ -370,5 +417,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         };
 
         showUnsavedChangesDialog(discardButtonClickListener);
+    }
+
+    public void cancelAction() {
+
+
     }
 }

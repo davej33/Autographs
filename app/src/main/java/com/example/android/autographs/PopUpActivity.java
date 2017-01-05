@@ -43,7 +43,7 @@ public class PopUpActivity extends AppCompatActivity {
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
-        getWindow().setLayout((int) (width * .50), (int) ((height * .75)));
+        getWindow().setLayout((int) (width * .50), (int) ((height * .40)));
 
         Intent intent = getIntent();
         mCurrentUri = intent.getData();
@@ -60,37 +60,39 @@ public class PopUpActivity extends AppCompatActivity {
 
                 mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
-                final int itemsSoldInt = Integer.parseInt(itemsSold.getText().toString());
-                Log.e(LOG_TAG, "mName # 8: " + mName);
-                int newInventory = CatalogActivity.mQuantity - itemsSoldInt;
+                int newInventory = CatalogActivity.mQuantity + 1;
+
                 if (newInventory < 0) {
                     Toast.makeText(PopUpActivity.this, "Not enough inventory", Toast.LENGTH_SHORT).show();
-                    //throw new IllegalArgumentException();
+                    finish();
+                } else {
+
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
+                    int saleUpdate = getContentResolver().update(mCurrentUri, values, null, null);
+
+
+                    ContentValues updateTableValues = new ContentValues();
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, 1);
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+                    Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
+                    long UriId = ContentUris.parseId(updTableReturnUri);
+                    Log.e(LOG_TAG, "UriID: " + UriId);
+
+                    if (saleUpdate > 0 && UriId > 0) {
+                        Toast.makeText(PopUpActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(PopUpActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e(LOG_TAG, "mName # 9: " + mName);
                     finish();
                 }
-
-                ContentValues values = new ContentValues();
-                values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
-                int saleUpdate = getContentResolver().update(mCurrentUri, values, null, null);
-
-
-                ContentValues updateTableValues = new ContentValues();
-                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
-                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, itemsSoldInt);
-                updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-
-                Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
-                long UriId = ContentUris.parseId(updTableReturnUri);
-                Log.e(LOG_TAG, "UriID: " + UriId);
-
-                if(saleUpdate > 0 && UriId > 0){
-                    Toast.makeText(PopUpActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(PopUpActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
-                }
-                Log.e(LOG_TAG, "mName # 9: " + mName);
-                finish();
             }
         });
     }
+
+
 }
+

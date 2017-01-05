@@ -47,6 +47,11 @@
 
     // popup buttons
     <string name="popup_ok">OK</string>
-    <string name="popup_cancel">CANCEL</string>
+    <string name="popup_cancel">Cancel</string>
+
+    // sale button dialog
+    <string name="finalize_sale">Finalize sale?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
 
 </resources>
