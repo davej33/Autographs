@@ -7,83 +7,144 @@
     android:layout_height="wrap_content"
     android:focusableInTouchMode="true">
 
+    <ImageView
+        android:id="@+id/image_x"
+        android:src="@mipmap/ic_launcher"
+        app:layout_heightPercent="40%"
+        app:layout_marginTopPercent="1%"
+        app:layout_widthPercent="25%" />
+
+    <TextView
+        android:id="@+id/item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/image_x"
+        android:text="@string/detail_titles_insert"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        app:layout_marginTopPercent="7%" />
+
     <EditText
         android:id="@+id/insert_item_name"
+        android:layout_toRightOf="@id/item_title"
         android:hint="@string/detail_hint_insert"
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="66%"
-        app:layout_marginPercent="2%"/>
+        app:layout_marginLeftPercent="3%"
+        app:layout_marginTopPercent="6%"
+        app:layout_widthPercent="46%" />
+
+    <TextView
+        android:id="@+id/price_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/item_title"
+        android:layout_toRightOf="@+id/image_x"
+        android:text="@string/detail_titles_price"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        app:layout_marginTopPercent="7%" />
 
     <EditText
         android:id="@+id/insert_price"
         android:layout_below="@+id/insert_item_name"
-        android:hint="@string/detail_hint_price"
+        android:layout_toRightOf="@id/price_title"
+        android:hint="0.00"
         android:inputType="numberDecimal"
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="66%"
-        app:layout_marginPercent="2%"/>
+        app:layout_marginTopPercent="2%"
+        android:layout_width="wrap_content" />
+
+    <TextView
+        android:id="@+id/quantity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/price_title"
+        android:layout_toRightOf="@+id/image_x"
+        android:text="@string/detail_titles_quantity"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        app:layout_marginTopPercent="6%" />
 
     <EditText
         android:id="@+id/insert_quantity"
         android:layout_below="@+id/insert_price"
-        android:hint="@string/detail_hint_quantity"
-        android:inputType="numberDecimal"
+        android:layout_toRightOf="@id/quantity_title"
+        android:hint="00"
+        android:inputType="number"
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="66%"
-        app:layout_marginPercent="2%"/>
+        app:layout_marginPercent="2%"
+        android:layout_width="wrap_content" />
+
+
+    <TextView
+        android:id="@+id/product_id_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_x"
+        android:text="@string/detail_item_id"
+        android:textSize="14sp"
+        app:layout_marginLeftPercent="5%" />
+
+    <TextView
+        android:id="@+id/product_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_x"
+        android:layout_toRightOf="@+id/product_id_title"
+        android:textSize="14sp"
+        app:layout_marginLeftPercent="1%" />
+
+    <TextView
+        android:id="@+id/supplier_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_id_title"
+        android:text="@string/detail_titles_supplier"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        app:layout_marginLeftPercent="14%"
+        app:layout_marginTopPercent="1%" />
 
     <EditText
         android:id="@+id/insert_supplier"
-        android:layout_below="@+id/insert_quantity"
+        android:layout_below="@+id/supplier_title"
         android:hint="@string/detail_hint_supplier"
+        android:textStyle=""
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="66%"
-        app:layout_marginPercent="2%"/>
+        app:layout_marginLeftPercent="2%"
+        app:layout_widthPercent="40%" />
 
-    <android.support.percent.PercentRelativeLayout
-        android:id="@+id/item_inventory_buttons"
+    <TextView
+        android:id="@+id/supEmail_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_below="@id/product_id_title"
+        android:layout_toRightOf="@id/supplier_title"
+        android:text="@string/detail_titles_supplier_email"
+        android:textAllCaps="true"
+        android:textSize="20sp"
+        app:layout_marginLeftPercent="30%"
+        app:layout_marginTopPercent="1%" />
 
-        <Button
-            android:id="@+id/details_adjust"
-            android:layout_alignParentRight="true"
-            android:text="@string/detail_adjust"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+    <EditText
+        android:id="@+id/insert_supplier_email"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/supEmail_title"
+        android:layout_toRightOf="@id/insert_supplier"
+        android:hint="@string/detail_hint_supplier_email"
+        android:inputType="textEmailAddress"
+        app:layout_heightPercent="12%"
 
-        <Button
-            android:id="@+id/details_place_order"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/details_adjust"
-            android:text="@string/detail_place_order"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
+        app:layout_widthPercent="40%" />
 
-        <Button
-            android:id="@+id/details_order_received"
-            android:layout_alignParentRight="true"
-            android:layout_below="@id/details_place_order"
-            android:text="@string/detail_order_received"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
-
-        <Button
-            android:id="@+id/details_sale"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/details_order_received"
-            android:text="@string/detail_sale"
-            app:layout_heightPercent="25%"
-            app:layout_widthPercent="30%" />
-    </android.support.percent.PercentRelativeLayout>
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/item_inventory_list"
         android:layout_width="match_parent"
         android:layout_below="@id/insert_supplier"
+        android:background="@android:color/holo_blue_light"
         app:layout_marginPercent="2%"
-        app:layout_widthPercent="66%"
-        android:background="@android:color/holo_blue_light">
+        app:layout_widthPercent="82%">
 
         <android.support.percent.PercentRelativeLayout
             android:id="@+id/list_headers_land"
@@ -161,8 +222,41 @@
         </android.support.percent.PercentRelativeLayout>
 
 
+    </android.support.percent.PercentRelativeLayout>
 
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/item_inventory_buttons"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignBaseline="@+id/insert_item_name"
+        android:layout_alignBottom="@+id/insert_item_name"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
+        <Button
+            android:id="@+id/details_place_order"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/details_adjust"
+            android:text="@string/detail_place_order"
+            app:layout_heightPercent="32%"
+            app:layout_marginTopPercent="3%"
+            app:layout_widthPercent="15%" />
+
+        <Button
+            android:id="@+id/details_order_received"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/details_place_order"
+            android:text="@string/detail_order_received"
+            app:layout_heightPercent="32%"
+            app:layout_widthPercent="15%" />
+
+        <Button
+            android:id="@+id/details_sale"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/details_order_received"
+            android:text="@string/detail_sale"
+            app:layout_heightPercent="32%"
+            app:layout_widthPercent="15%" />
     </android.support.percent.PercentRelativeLayout>
 </android.support.percent.PercentRelativeLayout>
 

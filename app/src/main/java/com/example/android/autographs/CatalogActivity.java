@@ -84,10 +84,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     public void insertItem() {
 
-        String testName = "Test Item";
-        double testSalePrice = 12.50;
-        int testQuant = 0;
-        String testSup = "Test Supplier";
+        String testName = "Kyle Schwarber Signed Bat";
+        double testSalePrice = 400.00;
+        int testQuant = 3;
+        String testEmail = "davidlgc33@gmail.com";
+        String testSup = "MLB Shop";
         double testPurchasePrice = 10.00;
         String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
@@ -97,7 +98,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyItem.put(Inventory.ITEM_NAME, testName);
         dummyItem.put(Inventory.ITEM_SALE_PRICE, testSalePrice);
         dummyItem.put(Inventory.ITEM_QUANTITY, testQuant);
-        dummyItem.put(Inventory.ITEM_SUPPLIER, testSup);
+        dummyItem.put(Inventory.ITEM_SUPPLIER, "MLB test");
+        dummyItem.put(Inventory.ITEM_SUPPLIER_EMAIL, testEmail);
 
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
@@ -105,14 +107,12 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         Log.e("Catalog Activity", "Dummy Inventory Insert: " + dummyUri);
         long testItemIdLong = ContentUris.parseId(dummyUri);
 
-
         // insert values into Updates
         ContentValues dummyInsertUpdates = new ContentValues();
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testQuant);
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, testSup);
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
         Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);

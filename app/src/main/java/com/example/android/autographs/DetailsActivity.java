@@ -40,6 +40,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mPriceInsert;
     private EditText mQuantInsert;
     private EditText mSupInsert;
+    private EditText mSupEmailInsert;
     String mTransactionTime;
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -96,12 +97,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mPriceInsert = (EditText) findViewById(R.id.insert_price);
         mQuantInsert = (EditText) findViewById(R.id.insert_quantity);
         mSupInsert = (EditText) findViewById(R.id.insert_supplier);
+        mSupEmailInsert = (EditText) findViewById(R.id.insert_supplier_email);
 
         // set onTouch listeners
         mNameInsert.setOnTouchListener(mOnTouch);
         mPriceInsert.setOnTouchListener(mOnTouch);
         mQuantInsert.setOnTouchListener(mOnTouch);
         mSupInsert.setOnTouchListener(mOnTouch);
+        mSupEmailInsert.setOnTouchListener(mOnTouch);
 
         // buttons onClickListener and intent
         Button saleButton = (Button) findViewById(R.id.details_sale);
@@ -309,7 +312,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     InventoryContract.Inventory.ITEM_NAME,
                     InventoryContract.Inventory.ITEM_SALE_PRICE,
                     InventoryContract.Inventory.ITEM_QUANTITY,
-                    InventoryContract.Inventory.ITEM_SUPPLIER};
+                    InventoryContract.Inventory.ITEM_SUPPLIER,
+                    InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL};
 
             loader = new CursorLoader(this,
                     mCurrentItemUri, projection,
@@ -348,6 +352,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
                     int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
+                    int supEmCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL);
 
                     int id = data.getInt(idCol);
                     Log.e(LOG_TAG, "id: " + id);
@@ -356,12 +361,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     String priceString = String.valueOf(price);
                     int quantity = data.getInt(quantCol);
                     String quantString = String.valueOf(quantity);
-                    String supplier = data.getColumnName(supCol);
+                    String supplier = data.getString(supCol);
+                    String supEmail = data.getString(supEmCol);
 
                     mNameInsert.setText(name);
                     mPriceInsert.setText(priceString);
                     mQuantInsert.setText(quantString);
                     mSupInsert.setText(supplier);
+                    mSupEmailInsert.setText(supEmail);
 
                     CatalogActivity.mQuantity = quantity;
                     mName = name;
@@ -419,8 +426,5 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         showUnsavedChangesDialog(discardButtonClickListener);
     }
 
-    public void cancelAction() {
 
-
-    }
 }

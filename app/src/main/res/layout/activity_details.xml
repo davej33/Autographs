@@ -7,6 +7,8 @@
     android:layout_height="wrap_content"
     android:focusableInTouchMode="true">
 
+    <ImageView
+        />
     <EditText
         android:id="@+id/insert_item_name"
         android:layout_width="match_parent"
@@ -28,7 +30,7 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/insert_price"
         android:hint="@string/detail_hint_quantity"
-        android:inputType="numberDecimal"
+        android:inputType="number"
         app:layout_heightPercent="10%"
         app:layout_marginLeftPercent="3%" />
 
@@ -40,13 +42,22 @@
         app:layout_heightPercent="10%"
         app:layout_marginLeftPercent="3%" />
 
+    <EditText
+        android:id="@+id/insert_supplier_email"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/insert_supplier"
+        android:hint="@string/detail_hint_supplier_email"
+        android:inputType="textEmailAddress"
+        app:layout_heightPercent="10%"
+        app:layout_marginLeftPercent="3%" />
+
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/item_inventory_list"
         android:layout_width="match_parent"
-        android:layout_below="@id/insert_supplier"
+        android:layout_below="@id/insert_supplier_email"
         android:background="@android:color/holo_blue_light"
-        app:layout_heightPercent="45%">
+        app:layout_heightPercent="35%">
 
         <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"

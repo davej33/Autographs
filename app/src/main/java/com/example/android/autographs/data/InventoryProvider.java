@@ -155,7 +155,7 @@ public class InventoryProvider extends ContentProvider {
 
                 idReturn = db.insert(Inventory.INV_TABLE_NAME, null, values);
 
-                if (id == -1) {
+                if (idReturn == -1) {
                     Log.e(LOG_TAG, "Failed to insert row: " + uri);
                     return null;
                 }
@@ -256,6 +256,14 @@ public class InventoryProvider extends ContentProvider {
             String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
             if (provCheck.isEmpty()) {
                 throw new IllegalArgumentException("Please enter supplier");
+            }
+        }
+
+        // provider check
+        if (values.containsKey(Inventory.ITEM_SUPPLIER_EMAIL)) {
+            String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER_EMAIL);
+            if (provCheck.isEmpty()) {
+                throw new IllegalArgumentException("Please enter supplier email");
             }
         }
 

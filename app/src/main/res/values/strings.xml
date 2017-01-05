@@ -32,10 +32,18 @@
     <string name="detail_delete_no">No</string>
 
     // insert hints
-    <string name="detail_hint_insert">Item</string>
+    <string name="detail_hint_insert">Add Item</string>
     <string name="detail_hint_price">Price</string>
     <string name="detail_hint_quantity">Quantity</string>
     <string name="detail_hint_supplier">Supplier</string>
+    <string name="detail_hint_supplier_email">Email</string>
+
+    // insert titles
+    <string name="detail_titles_insert">Item:</string>
+    <string name="detail_titles_price">Price: $</string>
+    <string name="detail_titles_quantity">In-Stock:</string>
+    <string name="detail_titles_supplier"><u>Supplier</u></string>
+    <string name="detail_titles_supplier_email"><u>Email</u></string>
 
     // list headers
     <string name="header_id">ID</string>
@@ -53,5 +61,8 @@
     <string name="finalize_sale">Finalize sale?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+
+    // detail item id
+    <string name="detail_item_id">Item ID:</string>
 
 </resources>

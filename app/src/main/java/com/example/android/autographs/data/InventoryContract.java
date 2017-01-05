@@ -33,6 +33,7 @@ public class InventoryContract {
         public static final String ITEM_SALE_PRICE = "sale_price";
         public static final String ITEM_QUANTITY = "quantity";
         public static final String ITEM_SUPPLIER = "supplier";
+        public static final String ITEM_SUPPLIER_EMAIL = "email";
 
     }
 

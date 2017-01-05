@@ -65,5 +65,6 @@ public class UpdatesCursorAdapter extends CursorAdapter {
         String dateString = cursor.getString(dateCol);
         dateView.setText(dateString);
 
+
     }
 }
