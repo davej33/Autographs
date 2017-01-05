@@ -145,9 +145,15 @@ public class InventoryProvider extends ContentProvider {
                     throw new IllegalArgumentException("Please enter valid quantity");
                 }
 
-                // provider check
-                String provCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
-                if (provCheck.isEmpty()) {
+                // supplier check
+                String supCheck = values.getAsString(Inventory.ITEM_SUPPLIER);
+                if (supCheck.isEmpty()) {
+                    throw new IllegalArgumentException("Please enter supplier");
+                }
+
+                // provider email check
+                String supEmailCheck = values.getAsString(Inventory.ITEM_SUPPLIER_EMAIL);
+                if (supEmailCheck.isEmpty()) {
                     throw new IllegalArgumentException("Please enter supplier");
                 }
 

@@ -22,6 +22,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
@@ -41,6 +42,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mQuantInsert;
     private EditText mSupInsert;
     private EditText mSupEmailInsert;
+    private TextView mItemId;
     String mTransactionTime;
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -98,6 +100,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mQuantInsert = (EditText) findViewById(R.id.insert_quantity);
         mSupInsert = (EditText) findViewById(R.id.insert_supplier);
         mSupEmailInsert = (EditText) findViewById(R.id.insert_supplier_email);
+        mItemId = (TextView) findViewById(R.id.product_id);
 
         // set onTouch listeners
         mNameInsert.setOnTouchListener(mOnTouch);
@@ -166,9 +169,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String price = mPriceInsert.getText().toString().trim();
         String quantity = mQuantInsert.getText().toString().trim();
         String supplier = mSupInsert.getText().toString().trim();
+        String supEmail = mSupEmailInsert.getText().toString().trim();
 
         // check for empty values
-        if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty()) {
+        if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
             return;
         }
 
@@ -176,6 +180,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         ContentValues insertValues = new ContentValues();
         insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
+        insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
 
         double priceSet = 0;
         if (!price.isEmpty()) {
@@ -354,7 +359,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
                     int supEmCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL);
 
-                    int id = data.getInt(idCol);
+                    String id = data.getString(idCol);
                     Log.e(LOG_TAG, "id: " + id);
                     String name = data.getString(nameCol);
                     Double price = data.getDouble(priceCol);
@@ -364,6 +369,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     String supplier = data.getString(supCol);
                     String supEmail = data.getString(supEmCol);
 
+                    mItemId.setText(id);
                     mNameInsert.setText(name);
                     mPriceInsert.setText(priceString);
                     mQuantInsert.setText(quantString);

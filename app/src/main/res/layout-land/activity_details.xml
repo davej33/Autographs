@@ -236,7 +236,6 @@
         <Button
             android:id="@+id/details_place_order"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/details_adjust"
             android:text="@string/detail_place_order"
             app:layout_heightPercent="32%"
             app:layout_marginTopPercent="3%"
