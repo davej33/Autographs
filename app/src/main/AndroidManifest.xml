@@ -29,15 +29,6 @@
                 android:value=".CatalogActivity" />
         </activity>
 
-        <activity
-            android:name=".PopUpActivity"
-            android:parentActivityName=".DetailsActivity"
-            android:theme="@style/AppTheme.PopupActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".CatalogActivity" />
-        </activity>
-
         <provider
             android:name=".data.InventoryProvider"
             android:authorities="com.example.android.autographs"

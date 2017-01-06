@@ -1,59 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorPrimaryDark">
+    android:orientation="vertical">
 
     <EditText
-        android:id="@+id/sale_quantity"
-        android:layout_width="wrap_content"
+        android:id="@+id/input_quantity"
+        android:layout_width="20dp"
+        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:padding="8dp"
-        android:background="@android:color/white"
-        android:text="0"
-        android:inputType="number"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/sale_price_per"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/sale_quantity"
-        android:layout_centerHorizontal="true"
-        android:text="Price"
-        android:textColor="@android:color/white"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/sale_item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@id/sale_price_per"
-        android:layout_centerHorizontal="true"
-        android:text="Item"
-        android:textColor="@android:color/white"
-        android:textSize="30sp" />
-
-    <Button
-        android:id="@+id/sale_purchase_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@android:color/white"
-        android:text="@string/popup_ok" />
-
-    <Button
-        android:id="@+id/sale_cancel_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:background="@android:color/holo_red_light"
-        android:text="@string/popup_cancel"
-        android:textColor="@android:color/white" />
+     />
 
 
-</RelativeLayout>
+</LinearLayout>

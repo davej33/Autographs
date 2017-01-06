@@ -15,6 +15,7 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.example.android.autographs.data.InventoryContract;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 
 import static com.example.android.autographs.CatalogActivity.mName;
@@ -43,7 +45,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private EditText mSupInsert;
     private EditText mSupEmailInsert;
     private TextView mItemId;
-    String mTransactionTime;
+    private String mTransactionTime;
+    private String mSupplier;
+    private String mSupplierEmail;
+
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
         @Override
@@ -108,6 +113,82 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mQuantInsert.setOnTouchListener(mOnTouch);
         mSupInsert.setOnTouchListener(mOnTouch);
         mSupEmailInsert.setOnTouchListener(mOnTouch);
+
+        // order button
+        Button orderButton = (Button) findViewById(R.id.details_place_order);
+        orderButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(DetailsActivity.this);
+                View promptsView = li.inflate(R.layout.popup_layout, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(DetailsActivity.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView.findViewById(R.id.input_quantity);
+
+                // set dialog message
+                alertDialogBuilder
+                        .setTitle("PURCHASE ORDER")
+                        .setMessage("Item: " + mName + "\n\nSupplier: " + mSupplier)
+                        .setPositiveButton("OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
+                                        String orderQuantity = userInput.getText().toString().trim();
+                                        int orderInt = 0;
+                                        if (!orderQuantity.isEmpty()) {
+                                            orderInt = Integer.parseInt(orderQuantity);
+                                        }
+
+                                        ContentValues values = new ContentValues();
+                                        values.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
+                                        values.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
+                                        values.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+                                        if (orderQuantity.isEmpty() || orderInt == 0) {
+                                            Toast.makeText(DetailsActivity.this, "No items ordered", Toast.LENGTH_SHORT).show();
+                                            dialog.dismiss();
+                                        } else {
+                                            Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, values);
+                                            if (orderInsert == null) {
+                                                Toast.makeText(DetailsActivity.this, "Order failed", Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            } else {
+                                                final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
+                                                        mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
+                                                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                                intent.setData(Uri.parse("mailto: "+ mSupplierEmail));
+                                                intent.putExtra(Intent.EXTRA_SUBJECT, "Purchase Order");
+                                                intent.putExtra(Intent.EXTRA_TEXT, emailBody);
+                                                startActivity(intent);
+                                            }
+                                            if (orderInt == 1) {
+                                                Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
+                                            } else {
+                                                Toast.makeText(DetailsActivity.this, orderQuantity + " items ordered", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+
+                                })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+            }
+        });
 
         // buttons onClickListener and intent
         Button saleButton = (Button) findViewById(R.id.details_sale);
@@ -378,6 +459,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                     CatalogActivity.mQuantity = quantity;
                     mName = name;
+                    mSupplier = supplier;
+                    mSupplierEmail = supEmail;
                 }
                 break;
             case UPD_CURSOR_LOADER_ID:
