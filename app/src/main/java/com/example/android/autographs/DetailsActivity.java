@@ -133,17 +133,44 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                 // set dialog message
                 alertDialogBuilder
-                        .setTitle("PURCHASE ORDER")
+                        .setTitle(R.string.purchase_order)
                         .setMessage("Item: " + mName + "\n\nSupplier: " + mSupplier)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
                                         String orderQuantity = userInput.getText().toString().trim();
-                                        int orderInt = 0;
+                                        int orderInt;
                                         if (!orderQuantity.isEmpty()) {
                                             orderInt = Integer.parseInt(orderQuantity);
-                                            if (orderInt < 1 || orderInt > 1000) {
+                                            if (orderInt < 1 && orderInt > 1000) {
+                                                ContentValues valuesUpdateTable = new ContentValues();
+                                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
+                                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
+                                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+
+                                                Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
+
+                                                if (orderInsert == null) {
+                                                    Toast.makeText(DetailsActivity.this, "DB input failed", Toast.LENGTH_SHORT).show();
+                                                    dialog.dismiss();
+                                                } else {
+                                                    final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
+                                                            mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
+                                                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                                    intent.setData(Uri.parse("mailto: " + mSupplierEmail));
+                                                    intent.putExtra(Intent.EXTRA_SUBJECT, "Purchase Order");
+                                                    intent.putExtra(Intent.EXTRA_TEXT, emailBody);
+                                                    startActivity(intent);
+                                                }
+                                                if (orderInt == 1) {
+                                                    Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
+                                                } else {
+                                                    Toast.makeText(DetailsActivity.this, orderQuantity + " items ordered", Toast.LENGTH_SHORT).show();
+
+                                                }
+                                            } else {
                                                 Toast.makeText(DetailsActivity.this, "Valid entries: 1 - 1000", Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                             }
@@ -151,32 +178,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                             Toast.makeText(DetailsActivity.this, "No value provided", Toast.LENGTH_SHORT).show();
                                         }
 
-                                        ContentValues valuesUpdateTable = new ContentValues();
-                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
-                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
-                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
-
-                                        Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
-
-                                        if (orderInsert == null) {
-                                            Toast.makeText(DetailsActivity.this, "DB input failed", Toast.LENGTH_SHORT).show();
-                                            dialog.dismiss();
-                                        } else {
-                                            final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
-                                                    mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
-                                            Intent intent = new Intent(Intent.ACTION_SENDTO);
-                                            intent.setData(Uri.parse("mailto: " + mSupplierEmail));
-                                            intent.putExtra(Intent.EXTRA_SUBJECT, "Purchase Order");
-                                            intent.putExtra(Intent.EXTRA_TEXT, emailBody);
-                                            startActivity(intent);
-                                        }
-                                        if (orderInt == 1) {
-                                            Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
-                                        } else {
-                                            Toast.makeText(DetailsActivity.this, orderQuantity + " items ordered", Toast.LENGTH_SHORT).show();
-
-                                        }
                                     }
 
                                 })
@@ -205,7 +207,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 final View ordRecView = layoutInflater.inflate(R.layout.popup_layout, null);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(DetailsActivity.this);
                 dialog.setView(ordRecView);
-                dialog.setTitle("Order Received");
+                dialog.setTitle(R.string.order_recvd);
                 dialog.setMessage("Item: " + mName + "\n\nSupplier: " + mSupplier);
                 dialog.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
                     @Override
@@ -213,11 +215,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
                         EditText input = (EditText) ordRecView.findViewById(R.id.input_quantity);
                         String ordRecString = input.getText().toString().trim();
-                        int ordRecInt = 0;
+                        int ordRecInt;
 
                         if (!ordRecString.isEmpty()) {
                             ordRecInt = Integer.parseInt(ordRecString);
-                            if (ordRecInt > 1 || ordRecInt < 1000) {
+                            if (ordRecInt > 1 && ordRecInt < 1000) {
                                 mInStock += ordRecInt;
 
                                 ContentValues valuesInventoryTable = new ContentValues();
@@ -257,7 +259,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                             Toast.makeText(DetailsActivity.this, "No value entered", Toast.LENGTH_SHORT).show();
                             dialog.cancel();
                         }
-
 
 
                     }

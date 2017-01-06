@@ -54,8 +54,11 @@
     <string name="header_date">Time</string>
 
     // popup buttons
-    <string name="enter">Add to \nInventory</string>
+    <string name="purchase_order">PURCHASE ORDER</string>
+    <string name="order_recvd">ORDER RECEIVED</string>
+    <string name="enter">Add</string>
     <string name="popup_ok">OK</string>
+    <string name="popup_order">Order</string>
     <string name="popup_cancel">Cancel</string>
 
     // sale button dialog
