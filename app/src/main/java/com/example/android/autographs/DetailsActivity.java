@@ -48,6 +48,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private String mTransactionTime;
     private String mSupplier;
     private String mSupplierEmail;
+    private int mInStock;
 
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -115,7 +116,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mSupEmailInsert.setOnTouchListener(mOnTouch);
 
         // order button
-        Button orderButton = (Button) findViewById(R.id.details_place_order);
+        final Button orderButton = (Button) findViewById(R.id.details_place_order);
         orderButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -142,35 +143,39 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                         int orderInt = 0;
                                         if (!orderQuantity.isEmpty()) {
                                             orderInt = Integer.parseInt(orderQuantity);
+                                            if (orderInt < 1 || orderInt > 1000) {
+                                                Toast.makeText(DetailsActivity.this, "Valid entries: 1 - 1000", Toast.LENGTH_SHORT).show();
+                                                dialog.dismiss();
+                                            }
+                                        } else {
+                                            Toast.makeText(DetailsActivity.this, "No value provided", Toast.LENGTH_SHORT).show();
                                         }
 
-                                        ContentValues values = new ContentValues();
-                                        values.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
-                                        values.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
-                                        values.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+                                        ContentValues valuesUpdateTable = new ContentValues();
+                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
+                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
+                                        valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
-                                        if (orderQuantity.isEmpty() || orderInt == 0) {
-                                            Toast.makeText(DetailsActivity.this, "No items ordered", Toast.LENGTH_SHORT).show();
+
+                                        Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
+
+                                        if (orderInsert == null) {
+                                            Toast.makeText(DetailsActivity.this, "DB input failed", Toast.LENGTH_SHORT).show();
                                             dialog.dismiss();
                                         } else {
-                                            Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, values);
-                                            if (orderInsert == null) {
-                                                Toast.makeText(DetailsActivity.this, "Order failed", Toast.LENGTH_SHORT).show();
-                                                dialog.dismiss();
-                                            } else {
-                                                final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
-                                                        mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
-                                                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                                                intent.setData(Uri.parse("mailto: "+ mSupplierEmail));
-                                                intent.putExtra(Intent.EXTRA_SUBJECT, "Purchase Order");
-                                                intent.putExtra(Intent.EXTRA_TEXT, emailBody);
-                                                startActivity(intent);
-                                            }
-                                            if (orderInt == 1) {
-                                                Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
-                                            } else {
-                                                Toast.makeText(DetailsActivity.this, orderQuantity + " items ordered", Toast.LENGTH_SHORT).show();
-                                            }
+                                            final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
+                                                    mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
+                                            Intent intent = new Intent(Intent.ACTION_SENDTO);
+                                            intent.setData(Uri.parse("mailto: " + mSupplierEmail));
+                                            intent.putExtra(Intent.EXTRA_SUBJECT, "Purchase Order");
+                                            intent.putExtra(Intent.EXTRA_TEXT, emailBody);
+                                            startActivity(intent);
+                                        }
+                                        if (orderInt == 1) {
+                                            Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(DetailsActivity.this, orderQuantity + " items ordered", Toast.LENGTH_SHORT).show();
+
                                         }
                                     }
 
@@ -178,7 +183,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                         .setNegativeButton("Cancel",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
+                                        dialog.dismiss();
                                     }
                                 });
 
@@ -190,7 +195,86 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-        // buttons onClickListener and intent
+        // order received button
+        Button orderReceivedButton = (Button) findViewById(R.id.details_order_received);
+        orderReceivedButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                LayoutInflater layoutInflater = LayoutInflater.from(DetailsActivity.this);
+                final View ordRecView = layoutInflater.inflate(R.layout.popup_layout, null);
+                AlertDialog.Builder dialog = new AlertDialog.Builder(DetailsActivity.this);
+                dialog.setView(ordRecView);
+                dialog.setTitle("Order Received");
+                dialog.setMessage("Item: " + mName + "\n\nSupplier: " + mSupplier);
+                dialog.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
+                        EditText input = (EditText) ordRecView.findViewById(R.id.input_quantity);
+                        String ordRecString = input.getText().toString().trim();
+                        int ordRecInt = 0;
+
+                        if (!ordRecString.isEmpty()) {
+                            ordRecInt = Integer.parseInt(ordRecString);
+                            if (ordRecInt > 1 || ordRecInt < 1000) {
+                                mInStock += ordRecInt;
+
+                                ContentValues valuesInventoryTable = new ContentValues();
+                                valuesInventoryTable.put(InventoryContract.Inventory.ITEM_QUANTITY, mInStock);
+                                String selection = InventoryContract.Inventory.ITEM_NAME + "=?";
+                                String[] selectionArgs = {mName};
+
+                                ContentValues valuesUpdateTable = new ContentValues();
+                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
+                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, ordRecString);
+                                valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+                                long inventoryTableUpdate = getContentResolver().update(InventoryContract.INVENTORY_CONTENT_URI, valuesInventoryTable,
+                                        selection, selectionArgs);
+                                if (inventoryTableUpdate == 0) {
+                                    Toast.makeText(DetailsActivity.this, "Inventory update failed", Toast.LENGTH_SHORT).show();
+                                    dialog.dismiss();
+                                }
+
+                                Uri updateTableInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
+                                if (updateTableInsert == null) {
+
+                                    mInStock -= ordRecInt;
+
+                                    ContentValues valuesInventoryTableUndo = new ContentValues();
+                                    valuesInventoryTable.put(InventoryContract.Inventory.ITEM_QUANTITY, mInStock);
+
+                                    long undoInventoryUpdate = getContentResolver().update(InventoryContract.INVENTORY_CONTENT_URI, valuesInventoryTableUndo,
+                                            selection, selectionArgs);
+
+                                }
+                            } else {
+                                Toast.makeText(DetailsActivity.this, "Valid entries: 1 - 1000", Toast.LENGTH_SHORT).show();
+                                dialog.dismiss();
+                            }
+                        } else {
+                            Toast.makeText(DetailsActivity.this, "No value entered", Toast.LENGTH_SHORT).show();
+                            dialog.cancel();
+                        }
+
+
+
+                    }
+
+                });
+                dialog.setNegativeButton(R.string.popup_cancel, dialogueDismiss);
+                // create alert dialog
+                AlertDialog alertDialog = dialog.create();
+
+                // show it
+                alertDialog.show();
+            }
+
+        });
+
+
+        // sale button
         Button saleButton = (Button) findViewById(R.id.details_sale);
         saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -461,6 +545,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     mName = name;
                     mSupplier = supplier;
                     mSupplierEmail = supEmail;
+                    mInStock = quantity;
                 }
                 break;
             case UPD_CURSOR_LOADER_ID:

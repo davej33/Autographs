@@ -54,6 +54,7 @@
     <string name="header_date">Time</string>
 
     // popup buttons
+    <string name="enter">Add to \nInventory</string>
     <string name="popup_ok">OK</string>
     <string name="popup_cancel">Cancel</string>
 
