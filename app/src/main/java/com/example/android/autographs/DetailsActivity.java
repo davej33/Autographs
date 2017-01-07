@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -49,6 +50,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private String mSupplier;
     private String mSupplierEmail;
     private int mInStock;
+    private static final int SALE = 1;
 
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -70,6 +72,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             return false;
         }
     };
+
+    public static String formatCurrency(Double d) {
+        DecimalFormat df = new DecimalFormat("0.00");
+        return df.format(d);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -291,7 +298,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                         int newInventory = CatalogActivity.mQuantity - 1;
 
                         if (newInventory < 0) {
-                            Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DetailsActivity.this, R.string.out_of_stock, Toast.LENGTH_SHORT).show();
                             finish();
                         } else {
 
@@ -302,7 +309,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                             ContentValues updateTableValues = new ContentValues();
                             updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
-                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, 1);
+                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, SALE);
                             updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
                             Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
@@ -337,6 +344,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String supplier = mSupInsert.getText().toString().trim();
         String supEmail = mSupEmailInsert.getText().toString().trim();
 
+        Log.e(LOG_TAG, "price from object: " + price);
         // check for empty values
         if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
             return;
@@ -348,9 +356,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
 
-        double priceSet = 0;
+        String priceSet = "";
         if (!price.isEmpty()) {
-            priceSet = Double.parseDouble(price);
+            double priceSetDouble = Double.valueOf(price);
+            priceSet = formatCurrency(priceSetDouble);
         }
         insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
 
@@ -361,7 +370,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
 
         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
-
         ContentValues transactionValues = new ContentValues();
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, quantSet);
@@ -529,7 +537,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     Log.e(LOG_TAG, "id: " + id);
                     String name = data.getString(nameCol);
                     Double price = data.getDouble(priceCol);
-                    String priceString = String.valueOf(price);
+                    String priceString = formatCurrency(price);
                     int quantity = data.getInt(quantCol);
                     String quantString = String.valueOf(quantity);
                     String supplier = data.getString(supCol);
@@ -547,6 +555,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     mSupplier = supplier;
                     mSupplierEmail = supEmail;
                     mInStock = quantity;
+
                 }
                 break;
             case UPD_CURSOR_LOADER_ID:

@@ -134,7 +134,7 @@ public class InventoryProvider extends ContentProvider {
                 }
 
                 // price check
-                long priceCheck = values.getAsLong(Inventory.ITEM_SALE_PRICE);
+                double priceCheck = values.getAsDouble(Inventory.ITEM_SALE_PRICE);
                 if (priceCheck <= 0 || priceCheck > 10000) {
                     throw new IllegalArgumentException("Please enter valid price");
                 }
@@ -243,8 +243,8 @@ public class InventoryProvider extends ContentProvider {
 
         // price check
         if (values.containsKey(Inventory.ITEM_SALE_PRICE)) {
-            long priceCheck = values.getAsLong(Inventory.ITEM_SALE_PRICE);
-            if (priceCheck <= 0 || priceCheck > 10000) {
+            double priceCheck = values.getAsDouble(Inventory.ITEM_SALE_PRICE);
+            if (priceCheck <= 0 || priceCheck > 1000000) {
                 throw new IllegalArgumentException("Please enter valid price");
             }
         }

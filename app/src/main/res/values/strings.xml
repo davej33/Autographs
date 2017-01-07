@@ -40,7 +40,7 @@
 
     // insert titles
     <string name="detail_titles_insert">Item:</string>
-    <string name="detail_titles_price">Price: $</string>
+    <string name="detail_titles_price">Price:</string>
     <string name="detail_titles_quantity">In-Stock:</string>
     <string name="detail_titles_supplier"><u>Supplier</u></string>
     <string name="detail_titles_supplier_email"><u>Email</u></string>
@@ -65,6 +65,7 @@
     <string name="finalize_sale">Finalize sale?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="out_of_stock">Out of Stock</string>
 
     // detail item id
     <string name="detail_item_id">Item ID:</string>

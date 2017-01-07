@@ -47,7 +47,8 @@ public class InventoryCursorAdapter extends CursorAdapter {
         // set price
         TextView priceView = (TextView) listItemView.findViewById(R.id.price);
         int priceCol = cursor.getColumnIndex(Inventory.ITEM_SALE_PRICE);
-        String priceString = Double.toString(cursor.getDouble(priceCol));
+        double price = cursor.getDouble(priceCol);
+        String priceString = DetailsActivity.formatCurrency(price);
         priceView.setText(priceString);
 
         // set quantity
@@ -61,6 +62,7 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
 
     }
+
 }
 
 

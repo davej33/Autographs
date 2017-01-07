@@ -92,7 +92,6 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         double testPurchasePrice = 10.00;
         String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
-
         // insert values into Inventory
         ContentValues dummyItem = new ContentValues();
         dummyItem.put(Inventory.ITEM_NAME, testName);
