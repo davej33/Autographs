@@ -2,6 +2,8 @@ package com.example.android.autographs;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,7 @@ import com.example.android.autographs.data.InventoryContract.Inventory;
 public class InventoryCursorAdapter extends CursorAdapter {
 
 
-    public InventoryCursorAdapter(Context context, Cursor cursor){
+    public InventoryCursorAdapter(Context context, Cursor cursor) {
         super(context, cursor, 0);
     }
 
@@ -52,7 +54,10 @@ public class InventoryCursorAdapter extends CursorAdapter {
 
         // set image
         ImageView image = (ImageView) listItemView.findViewById(R.id.image_view);
-
+        int imgCol = cursor.getColumnIndex(Inventory.ITEM_IMAGE);
+        byte[] imgByte = cursor.getBlob(imgCol);
+        Bitmap img = BitmapFactory.decodeByteArray(imgByte, 0, imgByte.length);
+        image.setImageBitmap(img);
 
     }
 

@@ -7,6 +7,11 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,6 +27,7 @@ import android.widget.Toast;
 import com.example.android.autographs.data.InventoryContract;
 import com.example.android.autographs.data.InventoryContract.Inventory;
 
+import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -81,6 +87,27 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
     }
 
+    public static Bitmap drawableToBitmap(Drawable drawable) {
+        Bitmap bitmap = null;
+
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            if (bitmapDrawable.getBitmap() != null) {
+                return bitmapDrawable.getBitmap();
+            }
+        }
+
+        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+        } else {
+            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        }
+
+        Canvas canvas = new Canvas(bitmap);
+        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+        drawable.draw(canvas);
+        return bitmap;
+    }
 
     public void insertItem() {
 
@@ -91,19 +118,23 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         String testSup = "MLB Shop";
         double testPurchasePrice = 10.00;
         String testTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+        Bitmap tempBMP = BitmapFactory.decodeResource(getResources(), R.drawable.default_image);
+        ByteArrayOutputStream arrayOutput = new ByteArrayOutputStream();
+        tempBMP.compress(Bitmap.CompressFormat.JPEG, 100, arrayOutput);
+        byte[] img = arrayOutput.toByteArray();
 
         // insert values into Inventory
         ContentValues dummyItem = new ContentValues();
         dummyItem.put(Inventory.ITEM_NAME, testName);
         dummyItem.put(Inventory.ITEM_SALE_PRICE, testSalePrice);
         dummyItem.put(Inventory.ITEM_QUANTITY, testQuant);
-        dummyItem.put(Inventory.ITEM_SUPPLIER, "MLB test");
+        dummyItem.put(Inventory.ITEM_SUPPLIER, testSup);
         dummyItem.put(Inventory.ITEM_SUPPLIER_EMAIL, testEmail);
+        dummyItem.put(Inventory.ITEM_IMAGE, img);
 
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
 
-        Log.e("Catalog Activity", "Dummy Inventory Insert: " + dummyUri);
         long testItemIdLong = ContentUris.parseId(dummyUri);
 
         // insert values into Updates
@@ -114,7 +145,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
 
         Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
-        Log.e("Catalog Activity", "Dummy Update Insert Return Value: " + dummyUriUpdate);
+
     }
 
     @Override
@@ -159,7 +190,8 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                     Inventory._ID,
                     Inventory.ITEM_NAME,
                     Inventory.ITEM_SALE_PRICE,
-                    Inventory.ITEM_QUANTITY};
+                    Inventory.ITEM_QUANTITY,
+                    Inventory.ITEM_IMAGE};
 
             loader = new CursorLoader(this,
                     InventoryContract.INVENTORY_CONTENT_URI,

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
@@ -389,6 +390,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String supplier = mSupInsert.getText().toString().trim();
         String supEmail = mSupEmailInsert.getText().toString().trim();
 
+
         Log.e(LOG_TAG, "price from object: " + price);
         // check for empty values
         if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
@@ -400,6 +402,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
         insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
+        insertValues.put(InventoryContract.Inventory.ITEM_IMAGE, mImage);
 
         String priceSet = "";
         if (!price.isEmpty()) {
@@ -550,7 +553,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     InventoryContract.Inventory.ITEM_SALE_PRICE,
                     InventoryContract.Inventory.ITEM_QUANTITY,
                     InventoryContract.Inventory.ITEM_SUPPLIER,
-                    InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL};
+                    InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL,
+                    InventoryContract.Inventory.ITEM_IMAGE};
 
             loader = new CursorLoader(this,
                     mCurrentItemUri, projection,
@@ -623,6 +627,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     int quantCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_QUANTITY);
                     int supCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER);
                     int supEmCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL);
+                    int imgCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_IMAGE);
 
                     String id = data.getString(idCol);
                     Log.e(LOG_TAG, "id: " + id);
@@ -633,6 +638,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     String quantString = String.valueOf(quantity);
                     String supplier = data.getString(supCol);
                     String supEmail = data.getString(supEmCol);
+                    byte[] image = data.getBlob(imgCol);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(image, 0, image.length);
 
                     mItemId.setText(id);
                     mNameInsert.setText(name);
@@ -640,12 +647,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                     mQuantInsert.setText(quantString);
                     mSupInsert.setText(supplier);
                     mSupEmailInsert.setText(supEmail);
+                    mImageInsert.setImageBitmap(bitmap);
 
                     CatalogActivity.mQuantity = quantity;
                     mName = name;
                     mSupplier = supplier;
                     mSupplierEmail = supEmail;
                     mInStock = quantity;
+                    mImage = image;
 
                 }
                 break;
