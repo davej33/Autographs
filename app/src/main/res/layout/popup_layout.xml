@@ -6,10 +6,12 @@
 
     <EditText
         android:id="@+id/input_quantity"
-        android:layout_width="20dp"
+        android:layout_width="80dp"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:inputType="number"
+        android:gravity="center_horizontal"
+        android:hint="0"
      />
 
 

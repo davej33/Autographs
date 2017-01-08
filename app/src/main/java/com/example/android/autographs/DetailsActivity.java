@@ -367,12 +367,18 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
         }
-        insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
+
+        int editChanged = 0;
+        if (!(mInStock == quantSet)) {
+            editChanged = -1 * (mInStock - quantSet);
+            insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
+        }
 
         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
         ContentValues transactionValues = new ContentValues();
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
-        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, quantSet);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
+       // transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, quantSet);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
