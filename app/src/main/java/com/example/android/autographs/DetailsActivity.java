@@ -150,7 +150,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                         int orderInt;
                                         if (!orderQuantity.isEmpty()) {
                                             orderInt = Integer.parseInt(orderQuantity);
-                                            if (orderInt < 1 && orderInt > 1000) {
+                                            if (orderInt > 1 && orderInt < 1000) {
                                                 ContentValues valuesUpdateTable = new ContentValues();
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
@@ -378,7 +378,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         ContentValues transactionValues = new ContentValues();
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
-       // transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, quantSet);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 

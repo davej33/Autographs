@@ -41,7 +41,7 @@
     // insert titles
     <string name="detail_titles_insert">Item:</string>
     <string name="detail_titles_price">Price: $</string>
-    <string name="detail_titles_quantity">In-Stock:</string>
+    <string name="detail_titles_quantity">Stock:</string>
     <string name="detail_titles_supplier"><u>Supplier</u></string>
     <string name="detail_titles_supplier_email"><u>Email</u></string>
 
