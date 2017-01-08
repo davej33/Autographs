@@ -122,6 +122,35 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         mSupInsert.setOnTouchListener(mOnTouch);
         mSupEmailInsert.setOnTouchListener(mOnTouch);
 
+        Button plusButton = (Button) findViewById(R.id.quantity_plus);
+        plusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String qPlus = mQuantInsert.getText().toString().trim();
+                int qPlusInt = Integer.valueOf(qPlus) + 1;
+                if (qPlusInt == 10001) {
+                    Toast.makeText(DetailsActivity.this, "Max Item Inventory is 10000", Toast.LENGTH_SHORT).show();
+                } else {
+                    String qString = String.valueOf(qPlusInt);
+                    mQuantInsert.setText(qString);
+                }
+            }
+        });
+
+        Button minButton = (Button) findViewById(R.id.quantity_minus);
+        minButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String qMin = mQuantInsert.getText().toString().trim();
+                int qMinInt = Integer.valueOf(qMin) - 1;
+                if (qMinInt == -1) {
+                    Toast.makeText(DetailsActivity.this, "Inventory Cannot Be Negative", Toast.LENGTH_SHORT).show();
+                } else {
+                    String qString = String.valueOf(qMinInt);
+                    mQuantInsert.setText(qString);
+                }
+            }
+        });
         // order button
         final Button orderButton = (Button) findViewById(R.id.details_place_order);
         orderButton.setOnClickListener(new View.OnClickListener() {
@@ -360,28 +389,35 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         if (!price.isEmpty()) {
             double priceSetDouble = Double.valueOf(price);
             priceSet = formatCurrency(priceSetDouble);
+        } else {
+            Toast.makeText(this, "Action Aborted: Item Requires a Name", Toast.LENGTH_LONG).show();
         }
         insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
 
         int quantSet = 0;
         if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
+            if (quantSet > 10000) {
+                Toast.makeText(this, "Max Item Inventory is 10000", Toast.LENGTH_SHORT).show();
+                finish();
+            }
         }
 
-        int editChanged = 0;
+        int editChanged;
         Uri insertTransaction = InventoryContract.BASE_CONTENT_URI;
         if (!(mInStock == quantSet)) {
             editChanged = -1 * (mInStock - quantSet);
             insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
 
 
-        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
-        ContentValues transactionValues = new ContentValues();
-        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
-        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
-        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
-        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-        insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);}
+            mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+            ContentValues transactionValues = new ContentValues();
+            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
+            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
+            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
+            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+            insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+        }
         // insert into DB or update
         if (mCurrentItemUri == null) {
 

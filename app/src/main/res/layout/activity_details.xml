@@ -73,7 +73,7 @@
         android:hint="0"
         android:inputType="number"
         app:layout_heightPercent="10%"
-        app:layout_widthPercent="12%"
+        app:layout_widthPercent="14%"
         app:layout_marginLeftPercent="1%"
          />
 
