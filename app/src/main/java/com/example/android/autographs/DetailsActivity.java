@@ -369,10 +369,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
 
         int editChanged = 0;
+        Uri insertTransaction = InventoryContract.BASE_CONTENT_URI;
         if (!(mInStock == quantSet)) {
             editChanged = -1 * (mInStock - quantSet);
             insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
-        }
+
 
         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
         ContentValues transactionValues = new ContentValues();
@@ -380,12 +381,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-
+        insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);}
         // insert into DB or update
         if (mCurrentItemUri == null) {
 
             Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
-            Uri insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
             if (insertItem != null && insertTransaction != null) {
                 Toast.makeText(this, "Item Successfully Added", Toast.LENGTH_SHORT).show();
             } else {
@@ -393,7 +393,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         } else {
             int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
-            Uri insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+
             if (updateItem == 0 && insertTransaction == null) {
                 Toast.makeText(this, "Item Update Failed", Toast.LENGTH_SHORT).show();
             } else {

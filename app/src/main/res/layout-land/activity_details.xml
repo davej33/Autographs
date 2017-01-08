@@ -49,7 +49,7 @@
 
         android:layout_below="@+id/insert_item_name"
         android:layout_toRightOf="@id/price_title"
-        android:hint="0000000.99"
+        android:hint="0.00"
         android:inputType="numberDecimal"
         app:layout_heightPercent="12%"
         app:layout_widthPercent="18%"
@@ -71,7 +71,7 @@
 
         android:layout_below="@+id/insert_price"
         android:layout_toRightOf="@id/quantity_title"
-        android:hint="00000"
+        android:hint="0"
         android:inputType="number"
         app:layout_heightPercent="12%"
         app:layout_widthPercent="11%"
