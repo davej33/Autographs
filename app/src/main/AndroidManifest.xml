@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.android.autographs">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+
     <application
+
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -18,6 +22,7 @@
             </intent-filter>
         </activity>
         <activity
+
             android:name=".DetailsActivity"
             android:label="@string/detail_label"
             android:parentActivityName=".CatalogActivity"
@@ -32,7 +37,9 @@
         <provider
             android:name=".data.InventoryProvider"
             android:authorities="com.example.android.autographs"
-            android:exported="false" />
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="true"/>
     </application>
 
 </manifest>
