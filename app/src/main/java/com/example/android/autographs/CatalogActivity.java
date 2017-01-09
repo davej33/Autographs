@@ -9,9 +9,6 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -87,26 +84,38 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         getLoaderManager().initLoader(CURSOR_LOADER_ID, null, this);
     }
 
-    public static Bitmap drawableToBitmap(Drawable drawable) {
-        Bitmap bitmap = null;
-
-        if (drawable instanceof BitmapDrawable) {
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
-            if (bitmapDrawable.getBitmap() != null) {
-                return bitmapDrawable.getBitmap();
-            }
-        }
-
-        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
-            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+    //
+//    public static Bitmap drawableToBitmap(Drawable drawable) {
+//        Bitmap bitmap = null;
+//
+//        if (drawable instanceof BitmapDrawable) {
+//            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+//            if (bitmapDrawable.getBitmap() != null) {
+//                return bitmapDrawable.getBitmap();
+//            }
+//        }
+//
+//        if (drawable.getIntrinsicWidth() <= 0 || drawable.getIntrinsicHeight() <= 0) {
+//            bitmap = Bitmap.createBitmap(1, 1, Bitmap.Config.ARGB_8888); // Single color bitmap will be created of 1x1 pixel
+//        } else {
+//            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        }
+//
+//        Canvas canvas = new Canvas(bitmap);
+//        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
+//        drawable.draw(canvas);
+//        return bitmap;
+//    }
+    private boolean uniqueNameChecker(String newName) {
+        String selection = InventoryContract.Inventory.ITEM_NAME + "=?";
+        String[] selectionArgs = {newName};
+        Cursor query = getContentResolver().query(InventoryContract.INVENTORY_CONTENT_URI,
+                null, selection, selectionArgs, null);
+        if (query.moveToFirst()) {
+            return false;
         } else {
-            bitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+            return true;
         }
-
-        Canvas canvas = new Canvas(bitmap);
-        drawable.setBounds(0, 0, canvas.getWidth(), canvas.getHeight());
-        drawable.draw(canvas);
-        return bitmap;
     }
 
     public void insertItem() {
@@ -132,20 +141,22 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         dummyItem.put(Inventory.ITEM_SUPPLIER_EMAIL, testEmail);
         dummyItem.put(Inventory.ITEM_IMAGE, img);
 
-        Uri dummyUri = getContentResolver().insert(
-                InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
+        if (uniqueNameChecker(testName)) {
+            Uri dummyUri = getContentResolver().insert(
+                    InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
 
-//        long testItemIdLong = ContentUris.parseId(dummyUri);
+            // insert values into Updates
+            ContentValues dummyInsertUpdates = new ContentValues();
+            dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
+            dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
+            dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testQuant);
+            dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
 
-        // insert values into Updates
-        ContentValues dummyInsertUpdates = new ContentValues();
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, testName);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_PRICE, testPurchasePrice);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, testQuant);
-        dummyInsertUpdates.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, testTransactionTime);
+            Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
 
-        Uri dummyUriUpdate = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, dummyInsertUpdates);
-
+        } else {
+            Toast.makeText(this, "Item name already exists", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

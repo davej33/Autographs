@@ -60,6 +60,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private byte[] mImage;
     private static final int SALE = 1;
     private static int RESULT_LOAD_IMAGE = 1;
+    private boolean mInputTester = true;
 
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -336,7 +337,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 itemSale();
             }
         });
-    }// on create
+    }// on create end
 
     public void saveItem() {
 
@@ -347,73 +348,107 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         String supplier = mSupInsert.getText().toString().trim();
         String supEmail = mSupEmailInsert.getText().toString().trim();
 
-
-        Log.e(LOG_TAG, "price from object: " + price);
-        // check for empty values
         if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
+            Toast.makeText(this, "Blank item dismissed", Toast.LENGTH_SHORT).show();
             return;
         }
-
         // create content value object and populate
         ContentValues insertValues = new ContentValues();
-        insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
-        insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
-        insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
-        insertValues.put(InventoryContract.Inventory.ITEM_IMAGE, mImage);
+
+        if (!name.isEmpty()) {
+            insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
+        } else {
+            Toast.makeText(this, "Item requires a name", Toast.LENGTH_SHORT).show();
+            mInputTester = false;
+        }
 
         String priceSet = "";
         if (!price.isEmpty()) {
             double priceSetDouble = Double.valueOf(price);
             priceSet = formatCurrency(priceSetDouble);
+            insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
         } else {
-            Toast.makeText(this, "Action Aborted: Item Requires a Name", Toast.LENGTH_LONG).show();
+            mInputTester = false;
         }
-        insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
+
+        if (!supplier.isEmpty()) {
+            insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
+        } else {
+            mInputTester = false;
+        }
+
+        if (!supEmail.isEmpty()) {
+            insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
+        } else {
+            mInputTester = false;
+        }
+
+        insertValues.put(InventoryContract.Inventory.ITEM_IMAGE, mImage);
 
 
-        int quantSet = 0;
+        int quantSet = -1;
         if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
-            if (quantSet > 10000) {
-                Toast.makeText(this, "Max Item Inventory is 10000", Toast.LENGTH_SHORT).show();
-                finish();
+            if (quantSet < 0 || quantSet >= 10000) {
+                Toast.makeText(this, "Inventory required (0 - 10000)", Toast.LENGTH_SHORT).show();
+                mInputTester = false;
             }
         }
 
-        int editChanged;
-        Uri insertTransaction = InventoryContract.BASE_CONTENT_URI;
-        if (!(mInStock == quantSet)) {
+        int editChanged = 0;
+        Uri insertTransaction;
+        if (mInStock != quantSet) {
             editChanged = -1 * (mInStock - quantSet);
             insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
-
-
-            mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
-            ContentValues transactionValues = new ContentValues();
-            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
-            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
-            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
-            transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-            insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
         }
-        // insert into DB or update
-        if (mCurrentItemUri == null) {
 
-            Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
-            if (insertItem != null && insertTransaction != null) {
-                Toast.makeText(this, "Item Successfully Added", Toast.LENGTH_SHORT).show();
+        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+
+        ContentValues transactionValues = new ContentValues();
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, name);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
+        transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+        if (mInputTester) {
+            // insert into DB or update
+            if (mCurrentItemUri == null) {
+                if (uniqueNameChecker(name)) {
+                    Uri insertItem = getContentResolver().insert(InventoryContract.INVENTORY_CONTENT_URI, insertValues);
+                    insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+                    if (insertItem != null && insertTransaction != null) {
+                        Toast.makeText(this, "Item Successfully Added", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(this, "Item name already exists", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, "Error Adding Item", Toast.LENGTH_SHORT).show();
+                int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
+                insertTransaction = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, transactionValues);
+
+                if (updateItem == 0 && insertTransaction == null) {
+                    Toast.makeText(this, "Item Update Failed", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, "Item Successfully Update", Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
-            int updateItem = getContentResolver().update(mCurrentItemUri, insertValues, null, null);
-
-            if (updateItem == 0 && insertTransaction == null) {
-                Toast.makeText(this, "Item Update Failed", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(this, "Item Successfully Update", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(this, "All fields required", Toast.LENGTH_SHORT).show();
         }
+    }
 
+    private boolean uniqueNameChecker(String newName) {
+        String selection = InventoryContract.Inventory.ITEM_NAME + "=?";
+        String[] selectionArgs = {newName};
+        Cursor query = getContentResolver().query(InventoryContract.INVENTORY_CONTENT_URI,
+                null, selection, selectionArgs, null);
+        if (query.moveToFirst()) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public void itemSale() {
@@ -482,7 +517,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         switch (item.getItemId()) {
             case R.id.add_item_save:
                 saveItem();
-                finish();
+                if (mInputTester) {
+                    finish();
+                }
                 break;
             case R.id.detail_item_delete:
                 showDeleteConfirmDialog();
