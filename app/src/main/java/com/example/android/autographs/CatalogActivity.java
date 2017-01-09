@@ -135,7 +135,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         Uri dummyUri = getContentResolver().insert(
                 InventoryContract.INVENTORY_CONTENT_URI, dummyItem);
 
-        long testItemIdLong = ContentUris.parseId(dummyUri);
+//        long testItemIdLong = ContentUris.parseId(dummyUri);
 
         // insert values into Updates
         ContentValues dummyInsertUpdates = new ContentValues();

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:descendantFocusability="blocksDescendants">
 
     <ImageView
         android:id="@+id/image_view"
@@ -19,27 +19,26 @@
 
         <TextView
             android:id="@+id/item_name"
-            android:text="NAME"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/price"
-            android:text="$40"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:id="@+id/quantity"
-            android:text="100"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </LinearLayout>
 
-    <!--<Button
+    <Button
         android:id="@+id/catalog_sale_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
-        android:layout_gravity="end"/> -->
+        android:text="@string/detail_sale"
+        android:layout_gravity="center_vertical"
+        />
 
 </LinearLayout>

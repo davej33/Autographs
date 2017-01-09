@@ -15,7 +15,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
     public static final String INVENTORY_DB_NAME = "inventoryDb";
     public static final int DB_VERSION = 1;
 
-    public InventoryDbHelper (Context context){
+    public InventoryDbHelper(Context context) {
         super(context, INVENTORY_DB_NAME, null, DB_VERSION);
     }
 
@@ -23,12 +23,15 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         String SQL_TABLE_CREATE = "CREATE TABLE " + Inventory.INV_TABLE_NAME + " ("
                 + Inventory._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-                + Inventory.ITEM_NAME + " TEXT NOT NULL, "
+                + Inventory.ITEM_NAME + " TEXT NOT NULL UNIQUE, "
                 + Inventory.ITEM_SALE_PRICE + " REAL NOT NULL, "
                 + Inventory.ITEM_QUANTITY + " INTEGER NOT NULL DEFAULT 0, "
                 + Inventory.ITEM_SUPPLIER + " TEXT NOT NULL, "
                 + Inventory.ITEM_IMAGE + " BLOB, "
-                + Inventory.ITEM_SUPPLIER_EMAIL + " TEXT NOT NULL)";
+                + Inventory.ITEM_SUPPLIER_EMAIL + " TEXT NOT NULL, "
+                + "FOREIGN KEY (" + Inventory._ID + ") REFERENCES "
+                + InventoryUpdates.UPDATE_TABLE_NAME + "("
+                + InventoryUpdates.UPDATE_ITEM_NAME + "))";
 
 
         db.execSQL(SQL_TABLE_CREATE);

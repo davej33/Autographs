@@ -196,7 +196,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                         int orderInt;
                                         if (!orderQuantity.isEmpty()) {
                                             orderInt = Integer.parseInt(orderQuantity);
-                                            if (orderInt > 1 && orderInt < 1000) {
+                                            if (orderInt >= 1 && orderInt <= 1000) {
                                                 ContentValues valuesUpdateTable = new ContentValues();
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
@@ -272,7 +272,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                         if (!ordRecString.isEmpty()) {
                             ordRecInt = Integer.parseInt(ordRecString);
-                            if (ordRecInt > 1 && ordRecInt < 1000) {
+                            if (ordRecInt > 0 && ordRecInt <= 1000) {
                                 mInStock += ordRecInt;
 
                                 ContentValues valuesInventoryTable = new ContentValues();
@@ -333,53 +333,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         saleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(DetailsActivity.this);
-                builder.setMessage(R.string.finalize_sale);
-                builder.setNegativeButton(R.string.no, dialogueDismiss);
-                builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
-
-                        int newInventory = CatalogActivity.mQuantity - 1;
-
-                        if (newInventory < 0) {
-                            Toast.makeText(DetailsActivity.this, R.string.out_of_stock, Toast.LENGTH_SHORT).show();
-                            finish();
-                        } else {
-
-                            ContentValues values = new ContentValues();
-                            values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
-                            int saleUpdate = getContentResolver().update(mCurrentItemUri, values, null, null);
-
-
-                            ContentValues updateTableValues = new ContentValues();
-                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
-                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, SALE);
-                            updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-
-                            Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
-                            long UriId = ContentUris.parseId(updTableReturnUri);
-                            Log.e(LOG_TAG, "UriID: " + UriId);
-
-                            if (saleUpdate > 0 && UriId > 0) {
-                                Toast.makeText(DetailsActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(DetailsActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
-                            }
-                            Log.e(LOG_TAG, "mName # 9: " + mName);
-                            finish();
-                        }
-
-                    }
-                });
-                // create and show the AlertDialogue
-                AlertDialog alert = builder.create();
-                alert.show();
-
+                itemSale();
             }
         });
-    }
+    }// on create
 
     public void saveItem() {
 
@@ -457,6 +414,52 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         }
 
+    }
+
+    public void itemSale() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(DetailsActivity.this);
+        builder.setMessage(R.string.finalize_sale);
+        builder.setNegativeButton(R.string.no, dialogueDismiss);
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
+
+                int newInventory = CatalogActivity.mQuantity - 1;
+
+                if (newInventory < 0) {
+                    Toast.makeText(DetailsActivity.this, R.string.out_of_stock, Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+
+                    ContentValues values = new ContentValues();
+                    values.put(InventoryContract.Inventory.ITEM_QUANTITY, newInventory);
+                    int saleUpdate = getContentResolver().update(mCurrentItemUri, values, null, null);
+
+
+                    ContentValues updateTableValues = new ContentValues();
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, CatalogActivity.mName);
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_SALE_QUANTITY, SALE);
+                    updateTableValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
+
+                    Uri updTableReturnUri = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, updateTableValues);
+                    long UriId = ContentUris.parseId(updTableReturnUri);
+                    Log.e(LOG_TAG, "UriID: " + UriId);
+
+                    if (saleUpdate > 0 && UriId > 0) {
+                        Toast.makeText(DetailsActivity.this, "Sale Processed", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(DetailsActivity.this, "Failed Inventory Update", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.e(LOG_TAG, "mName # 9: " + mName);
+                    finish();
+
+                }
+            }
+        });
+        // create and show the AlertDialogue
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override
@@ -609,7 +612,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             } catch (IOException e) {
                 e.printStackTrace();
             }
-           //  BitmapFactory.decodeFile(picturePath);
+            //  BitmapFactory.decodeFile(picturePath);
 
             Log.e(LOG_TAG, "picture path string: " + picturePath);
         }
