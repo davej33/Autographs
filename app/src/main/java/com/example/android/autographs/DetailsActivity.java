@@ -145,9 +145,12 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
                 String qPlus = mQuantInsert.getText().toString().trim();
+                if(qPlus.isEmpty()){
+                    qPlus = "0";
+                }
                 int qPlusInt = Integer.valueOf(qPlus) + 1;
                 if (qPlusInt == 10001) {
-                    Toast.makeText(DetailsActivity.this, "Max Item Inventory is 10000", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailsActivity.this, "Inventory max 10000", Toast.LENGTH_SHORT).show();
                 } else {
                     String qString = String.valueOf(qPlusInt);
                     mQuantInsert.setText(qString);
@@ -162,7 +165,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 String qMin = mQuantInsert.getText().toString().trim();
                 int qMinInt = Integer.valueOf(qMin) - 1;
                 if (qMinInt == -1) {
-                    Toast.makeText(DetailsActivity.this, "Inventory Cannot Be Negative", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailsActivity.this, "Inventory cannot be negative", Toast.LENGTH_SHORT).show();
                 } else {
                     String qString = String.valueOf(qMinInt);
                     mQuantInsert.setText(qString);
@@ -357,6 +360,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         if (!name.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
+            mInputTester = true;
         } else {
             Toast.makeText(this, "Item requires a name", Toast.LENGTH_SHORT).show();
             mInputTester = false;
@@ -367,18 +371,21 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             double priceSetDouble = Double.valueOf(price);
             priceSet = formatCurrency(priceSetDouble);
             insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
+            mInputTester = true;
         } else {
             mInputTester = false;
         }
 
         if (!supplier.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
+            mInputTester = true;
         } else {
             mInputTester = false;
         }
 
         if (!supEmail.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
+            mInputTester = true;
         } else {
             mInputTester = false;
         }
@@ -389,6 +396,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         int quantSet = -1;
         if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
+            mInputTester = true;
             if (quantSet < 0 || quantSet >= 10000) {
                 Toast.makeText(this, "Inventory required (0 - 10000)", Toast.LENGTH_SHORT).show();
                 mInputTester = false;
@@ -409,7 +417,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-
+        Log.e(LOG_TAG, "input tester ------------------------ " + mInputTester);
         if (mInputTester) {
             // insert into DB or update
             if (mCurrentItemUri == null) {
@@ -448,6 +456,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             return false;
         } else {
             return true;
+
         }
     }
 

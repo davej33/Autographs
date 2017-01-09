@@ -120,7 +120,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
     public void insertItem() {
 
-        String testName = "Kyle Schwarber Signed Bat";
+        String testName = "bat";
         double testSalePrice = 400.00;
         int testQuant = 3;
         String testEmail = "davidlgc33@gmail.com";
