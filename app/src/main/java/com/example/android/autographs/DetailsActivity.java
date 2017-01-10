@@ -10,6 +10,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.android.autographs.data.InventoryContract;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -60,7 +62,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private byte[] mImage;
     private static final int SALE = 1;
     private static int RESULT_LOAD_IMAGE = 1;
-    private boolean mInputTester = true;
+    private int mInputTester;
 
 
     DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
@@ -89,17 +91,14 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(activity_details);
 
-        Log.e(LOG_TAG, "mName # 3: " + mName);
-
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
 
         if (mCurrentItemUri != null) {
             setTitle(R.string.detail_edit_item);
             getLoaderManager().initLoader(INV_CURSOR_LOADER_ID, null, this);
-            Log.e(LOG_TAG, "mName # 4: " + mName);
             getLoaderManager().initLoader(UPD_CURSOR_LOADER_ID, null, this);
-            Log.e(LOG_TAG, "mName # 5: " + mName);
+
         } else {
             setTitle(R.string.detail_insert);
             invalidateOptionsMenu();
@@ -163,6 +162,9 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
                 String qMin = mQuantInsert.getText().toString().trim();
+                if(qMin.isEmpty()){
+                    qMin = "0";
+                }
                 int qMinInt = Integer.valueOf(qMin) - 1;
                 if (qMinInt == -1) {
                     Toast.makeText(DetailsActivity.this, "Inventory cannot be negative", Toast.LENGTH_SHORT).show();
@@ -344,15 +346,20 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     public void saveItem() {
 
+        mInputTester = 0;
         // get values from objects
         String name = mNameInsert.getText().toString().trim();
         String price = mPriceInsert.getText().toString().trim();
         String quantity = mQuantInsert.getText().toString().trim();
         String supplier = mSupInsert.getText().toString().trim();
         String supEmail = mSupEmailInsert.getText().toString().trim();
+        Bitmap bitmap = ((BitmapDrawable)mImageInsert.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageInByte = baos.toByteArray();
 
         if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
-            Toast.makeText(this, "Blank item dismissed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "No item info entered", Toast.LENGTH_SHORT).show();
             return;
         }
         // create content value object and populate
@@ -360,10 +367,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
         if (!name.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_NAME, name);
-            mInputTester = true;
-        } else {
-            Toast.makeText(this, "Item requires a name", Toast.LENGTH_SHORT).show();
-            mInputTester = false;
+            mInputTester += 1;
         }
 
         String priceSet = "";
@@ -371,35 +375,25 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             double priceSetDouble = Double.valueOf(price);
             priceSet = formatCurrency(priceSetDouble);
             insertValues.put(InventoryContract.Inventory.ITEM_SALE_PRICE, priceSet);
-            mInputTester = true;
-        } else {
-            mInputTester = false;
+            mInputTester += 1;
         }
 
         if (!supplier.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER, supplier);
-            mInputTester = true;
-        } else {
-            mInputTester = false;
+            mInputTester += 1;
         }
 
         if (!supEmail.isEmpty()) {
             insertValues.put(InventoryContract.Inventory.ITEM_SUPPLIER_EMAIL, supEmail);
-            mInputTester = true;
-        } else {
-            mInputTester = false;
+            mInputTester += 1;
         }
-
-        insertValues.put(InventoryContract.Inventory.ITEM_IMAGE, mImage);
-
 
         int quantSet = -1;
         if (!quantity.isEmpty()) {
             quantSet = Integer.parseInt(quantity);
-            mInputTester = true;
+            mInputTester += 1;
             if (quantSet < 0 || quantSet >= 10000) {
                 Toast.makeText(this, "Inventory required (0 - 10000)", Toast.LENGTH_SHORT).show();
-                mInputTester = false;
             }
         }
 
@@ -410,6 +404,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             insertValues.put(InventoryContract.Inventory.ITEM_QUANTITY, quantSet);
         }
 
+        insertValues.put(InventoryContract.Inventory.ITEM_IMAGE, imageInByte);
+
         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new java.util.Date());
 
         ContentValues transactionValues = new ContentValues();
@@ -418,7 +414,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
         Log.e(LOG_TAG, "input tester ------------------------ " + mInputTester);
-        if (mInputTester) {
+        if (mInputTester == 5) {
             // insert into DB or update
             if (mCurrentItemUri == null) {
                 if (uniqueNameChecker(name)) {
@@ -526,7 +522,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         switch (item.getItemId()) {
             case R.id.add_item_save:
                 saveItem();
-                if (mInputTester) {
+                if (mInputTester == 5) {
                     finish();
                 }
                 break;

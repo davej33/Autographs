@@ -9,7 +9,7 @@
 
     <ImageView
         android:id="@+id/image_x"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/default_image"
         app:layout_heightPercent="40%"
         app:layout_marginTopPercent="1%"
         app:layout_widthPercent="25%" />
@@ -52,8 +52,8 @@
         android:hint="0.00"
         android:inputType="numberDecimal"
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="18%"
-        app:layout_marginTopPercent="2%" />
+        app:layout_marginTopPercent="2%"
+        app:layout_widthPercent="18%" />
 
     <TextView
         android:id="@+id/quantity_title"
@@ -74,8 +74,8 @@
         android:hint="0"
         android:inputType="number"
         app:layout_heightPercent="12%"
-        app:layout_widthPercent="11%"
-        app:layout_marginPercent="2%" />
+        app:layout_marginPercent="2%"
+        app:layout_widthPercent="11%" />
 
     <Button
         android:id="@+id/quantity_minus"
@@ -153,7 +153,6 @@
         android:hint="@string/detail_hint_supplier_email"
         android:inputType="textEmailAddress"
         app:layout_heightPercent="12%"
-
         app:layout_widthPercent="40%" />
 
 
@@ -161,8 +160,8 @@
         android:id="@+id/item_inventory_list"
         android:layout_width="match_parent"
         android:layout_below="@id/insert_supplier"
-        android:background="@android:color/holo_blue_light"
-        app:layout_marginPercent="2%"
+        android:layout_margin="5dp"
+        android:background="#B3E5FC"
         app:layout_widthPercent="82%">
 
         <android.support.percent.PercentRelativeLayout

@@ -48,6 +48,16 @@
             android:paddingTop="16dp"
             android:text="@string/empty_text_title"
             android:textAppearance="?android:textAppearanceMedium"/>
+        <TextView
+            android:id="@+id/empty_title_text_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/empty_title_text"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="sans-serif-medium"
+            android:paddingTop="16dp"
+            android:text="@string/empty_text_title_2"
+            android:textAppearance="?android:textAppearanceMedium"/>
 
     </RelativeLayout>
 
@@ -58,5 +68,5 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_margin="@dimen/fab_margin"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@drawable/plus2"/>
 </RelativeLayout>

@@ -10,7 +10,7 @@
     <ImageView
         android:id="@+id/image_x"
         android:layout_alignParentRight="true"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/default_image"
         app:layout_heightPercent="25%"
         app:layout_marginRightPercent="5%"
         app:layout_marginTopPercent="12%"
@@ -161,7 +161,9 @@
         android:id="@+id/item_inventory_list"
         android:layout_width="match_parent"
         android:layout_below="@id/insert_supplier_email"
-        android:background="@android:color/holo_blue_light"
+        android:background="#B3E5FC"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         app:layout_heightPercent="35%">
 
         <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"

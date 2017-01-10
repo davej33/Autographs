@@ -4,7 +4,8 @@
     <string name="delete_all">Delete All</string>
 
     // empty view text
-    <string name="empty_text_title">No Items For Sale</string>
+    <string name="empty_text_title">No items for sale</string>
+    <string name="empty_text_title_2">Press button below to add item</string>
 
     // detail view
     <string name="detail_sale">Sale</string>
