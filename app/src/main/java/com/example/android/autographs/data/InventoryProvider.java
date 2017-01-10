@@ -106,7 +106,6 @@ public class InventoryProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
 
-
         final int match = sUriMatcher.match(uri);
         switch (match) {
             case INVENTORY_TABLE:
@@ -169,8 +168,6 @@ public class InventoryProvider extends ContentProvider {
                 getContext().getContentResolver().notifyChange(uri, null);
                 break;
             case UPDATES_TABLE:
-
-
                 db = mDbHelper.getWritableDatabase();
                 idReturn = db.insert(InventoryUpdates.UPDATE_TABLE_NAME, null, values);
                 if (idReturn == -1) {

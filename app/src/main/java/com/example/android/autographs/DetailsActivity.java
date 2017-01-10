@@ -47,7 +47,7 @@ import static com.example.android.autographs.data.InventoryProvider.LOG_TAG;
 
 public class DetailsActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    // globals
+    // class vars
     private EditText mNameInsert;
     private EditText mPriceInsert;
     private EditText mQuantInsert;
@@ -63,16 +63,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
     private static final int SALE = 1;
     private static int RESULT_LOAD_IMAGE = 1;
     private int mInputTester;
-
-
-    DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
+    private DialogInterface.OnClickListener dialogueDismiss = new DialogInterface.OnClickListener() {
         @Override
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
         }
     };
     UpdatesCursorAdapter mUpdateCursorAdapter;
-
     Uri mCurrentItemUri;
     private static final int INV_CURSOR_LOADER_ID = 0;
     private static final int UPD_CURSOR_LOADER_ID = 1;
@@ -91,9 +88,11 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         super.onCreate(savedInstanceState);
         setContentView(activity_details);
 
+        // get intent info
         Intent intent = getIntent();
         mCurrentItemUri = intent.getData();
 
+        // flow statement to determine if item is being updated or inserted
         if (mCurrentItemUri != null) {
             setTitle(R.string.detail_edit_item);
             getLoaderManager().initLoader(INV_CURSOR_LOADER_ID, null, this);
@@ -108,6 +107,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             listLayout.setVisibility(View.GONE);
         }
 
+        // set listview adapter
         ListView listView = (ListView) findViewById(R.id.item_transaction_history);
         mUpdateCursorAdapter = new UpdatesCursorAdapter(this, null);
         listView.setAdapter(mUpdateCursorAdapter);
@@ -138,11 +138,13 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
-
+        // increment inventory button
         Button plusButton = (Button) findViewById(R.id.quantity_plus);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                // get current value, initialize to zero if no current value
                 String qPlus = mQuantInsert.getText().toString().trim();
                 if(qPlus.isEmpty()){
                     qPlus = "0";
@@ -157,6 +159,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             }
         });
 
+        // decrement button for inventory
         Button minButton = (Button) findViewById(R.id.quantity_minus);
         minButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,6 +177,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 }
             }
         });
+
         // order button
         final Button orderButton = (Button) findViewById(R.id.details_place_order);
         orderButton.setOnClickListener(new View.OnClickListener() {
@@ -190,31 +194,40 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                 final EditText userInput = (EditText) promptsView.findViewById(R.id.input_quantity);
 
-                // set dialog message
+                // set dialog message and onClick actions
                 alertDialogBuilder
                         .setTitle(R.string.purchase_order)
                         .setMessage("Item: " + mName + "\n\nSupplier: " + mSupplier)
                         .setPositiveButton("OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
+
+                                        // get transaction time
                                         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
+
+                                        // get quantity entered by user
                                         String orderQuantity = userInput.getText().toString().trim();
                                         int orderInt;
+
+                                        // if quantity is not empty and is between 1 - 1000
                                         if (!orderQuantity.isEmpty()) {
                                             orderInt = Integer.parseInt(orderQuantity);
                                             if (orderInt >= 1 && orderInt <= 1000) {
+
+                                                // create content values and insert order into update db
                                                 ContentValues valuesUpdateTable = new ContentValues();
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCH_QUANTITY, orderQuantity);
                                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
-
                                                 Uri orderInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
 
+                                                // if insert failed, toast and quit
                                                 if (orderInsert == null) {
                                                     Toast.makeText(DetailsActivity.this, "DB input failed", Toast.LENGTH_SHORT).show();
                                                     dialog.dismiss();
                                                 } else {
+                                                    // if insert successful, open email app and populate with order supplier and order info
                                                     final String emailBody = mSupplier + ",<br><br>We would like to make the following purchase:<br><br>-Item: " +
                                                             mName + "<br>-Quantity: " + orderQuantity + "<br><br>Thank You, <br><br>Dave<br>Autograph Kings";
                                                     Intent intent = new Intent(Intent.ACTION_SENDTO);
@@ -223,6 +236,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                                     intent.putExtra(Intent.EXTRA_TEXT, emailBody);
                                                     startActivity(intent);
                                                 }
+                                                // send correct toast depending on singular or multiple item order
                                                 if (orderInt == 1) {
                                                     Toast.makeText(DetailsActivity.this, orderQuantity + " item ordered", Toast.LENGTH_SHORT).show();
                                                 } else {
@@ -230,10 +244,12 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
                                                 }
                                             } else {
+                                                // if quantity not between 1-1000, toast and dismiss
                                                 Toast.makeText(DetailsActivity.this, "Valid entries: 1 - 1000", Toast.LENGTH_SHORT).show();
                                                 dialog.dismiss();
                                             }
                                         } else {
+                                            // if user doesn't enter a number, toast
                                             Toast.makeText(DetailsActivity.this, "No value provided", Toast.LENGTH_SHORT).show();
                                         }
 
@@ -262,6 +278,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
             @Override
             public void onClick(View v) {
 
+                // inflate dialogue with layout res
                 LayoutInflater layoutInflater = LayoutInflater.from(DetailsActivity.this);
                 final View ordRecView = layoutInflater.inflate(R.layout.popup_layout, null);
                 AlertDialog.Builder dialog = new AlertDialog.Builder(DetailsActivity.this);
@@ -271,26 +288,32 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                 dialog.setPositiveButton(R.string.enter, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+
+                        // transaction time
                         mTransactionTime = new SimpleDateFormat("MMM-dd-yy HH:mm", Locale.US).format(new Date());
                         EditText input = (EditText) ordRecView.findViewById(R.id.input_quantity);
                         String ordRecString = input.getText().toString().trim();
                         int ordRecInt;
-
                         if (!ordRecString.isEmpty()) {
                             ordRecInt = Integer.parseInt(ordRecString);
                             if (ordRecInt > 0 && ordRecInt <= 1000) {
+
+                                // add quantity received to current inventory to get new inventory value
                                 mInStock += ordRecInt;
 
+                                // content values for inventory db
                                 ContentValues valuesInventoryTable = new ContentValues();
                                 valuesInventoryTable.put(InventoryContract.Inventory.ITEM_QUANTITY, mInStock);
                                 String selection = InventoryContract.Inventory.ITEM_NAME + "=?";
                                 String[] selectionArgs = {mName};
 
+                                // content values for update db
                                 ContentValues valuesUpdateTable = new ContentValues();
                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_ITEM_NAME, mName);
                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_PURCHASE_RECEIVED, ordRecString);
                                 valuesUpdateTable.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
 
+                                // update inventory in inventory db
                                 long inventoryTableUpdate = getContentResolver().update(InventoryContract.INVENTORY_CONTENT_URI, valuesInventoryTable,
                                         selection, selectionArgs);
                                 if (inventoryTableUpdate == 0) {
@@ -298,7 +321,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
                                     dialog.dismiss();
                                 }
 
+                                // insert into update db
                                 Uri updateTableInsert = getContentResolver().insert(InventoryContract.UPDATES_CONTENT_URI, valuesUpdateTable);
+
+                                // update insert fails, undo inventory update
                                 if (updateTableInsert == null) {
 
                                     mInStock -= ordRecInt;
@@ -346,7 +372,6 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
 
     public void saveItem() {
 
-        mInputTester = 0;
         // get values from objects
         String name = mNameInsert.getText().toString().trim();
         String price = mPriceInsert.getText().toString().trim();
@@ -358,11 +383,10 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageInByte = baos.toByteArray();
 
-        if (name.isEmpty() && price.isEmpty() && quantity.isEmpty() && supplier.isEmpty() && supEmail.isEmpty()) {
-            Toast.makeText(this, "No item info entered", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        // create content value object and populate
+        // used to verify all field populated
+        mInputTester = 0;
+
+        // create content value object and populate after data verified
         ContentValues insertValues = new ContentValues();
 
         if (!name.isEmpty()) {
@@ -413,7 +437,8 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_MANUAL_EDIT, editChanged);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_SUPPLIER, supplier);
         transactionValues.put(InventoryContract.InventoryUpdates.UPDATE_TRANSACTION_DATETIME, mTransactionTime);
-        Log.e(LOG_TAG, "input tester ------------------------ " + mInputTester);
+
+        // if all data fields insert or update
         if (mInputTester == 5) {
             // insert into DB or update
             if (mCurrentItemUri == null) {
@@ -443,6 +468,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
+    // check if item name already exists
     private boolean uniqueNameChecker(String newName) {
         String selection = InventoryContract.Inventory.ITEM_NAME + "=?";
         String[] selectionArgs = {newName};
@@ -456,6 +482,7 @@ public class DetailsActivity extends AppCompatActivity implements LoaderManager.
         }
     }
 
+    // item sale method
     public void itemSale() {
         AlertDialog.Builder builder = new AlertDialog.Builder(DetailsActivity.this);
         builder.setMessage(R.string.finalize_sale);

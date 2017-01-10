@@ -57,6 +57,7 @@ public class InventoryContract {
 
     }
 
+    // MIME
     public static final String CONTENT_LIST_TYPE = ContentResolver.CURSOR_DIR_BASE_TYPE +
             "/" + CONTENT_AUTHORITY + "/" + INVENTORY_PATH;
 

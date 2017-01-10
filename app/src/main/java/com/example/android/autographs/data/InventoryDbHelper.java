@@ -21,6 +21,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        // create inventory table
         String SQL_TABLE_CREATE = "CREATE TABLE " + Inventory.INV_TABLE_NAME + " ("
                 + Inventory._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + Inventory.ITEM_NAME + " TEXT NOT NULL UNIQUE, "
@@ -36,6 +37,7 @@ public class InventoryDbHelper extends SQLiteOpenHelper {
 
         db.execSQL(SQL_TABLE_CREATE);
 
+        // table update table
         String SQL_TABLE2_CREATE = "CREATE TABLE " + InventoryUpdates.UPDATE_TABLE_NAME + " ("
                 + InventoryUpdates.UPDATE_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + InventoryUpdates.UPDATE_ITEM_NAME + " TEXT NOT NULL, "

@@ -196,6 +196,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
 
         CursorLoader loader = null;
 
+        // cursor loader
         if (id == CURSOR_LOADER_ID) {
             String[] projection = {
                     Inventory._ID,
@@ -209,6 +210,7 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
                     projection, null, null, null);
         }
 
+        // loader two
         if (id == GET_NAME_LOADER_ID) {
             String selection = Inventory._ID + "=?";
             String[] selectionArgs = {mPosition};
@@ -230,14 +232,11 @@ public class CatalogActivity extends AppCompatActivity implements LoaderManager.
         switch (loader.getId()) {
             case GET_NAME_LOADER_ID:
                 if (data.moveToFirst()) {
-                    int priceCol = data.getColumnIndex(InventoryContract.Inventory.ITEM_SALE_PRICE);
-                    int idCol = data.getColumnIndex(Inventory._ID);
                     int nameCol = data.getColumnIndex(Inventory.ITEM_NAME);
 
-                    double p = data.getDouble(priceCol);
-                    int id = data.getInt(idCol);
+                    // assign name to global mName var
                     mName = data.getString(nameCol);
-                    Log.e(LOG_TAG, "id: " + id + " price: " + p + " mName # 1.5: " + mName);
+
                 }
                 break;
             case CURSOR_LOADER_ID:
